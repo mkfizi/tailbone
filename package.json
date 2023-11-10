@@ -1,0 +1,19 @@
+{
+	"name": "@mkfizi/tailbone",
+	"version": "0.1.0",
+	"description": "TailwindCSS UX skeleton generator",
+	"keywords": [
+		"Tailwindcss",
+		"Generator",
+		"UX Skeleton"
+	],
+	"author": "hi@mkfizi.dev",
+	"license": "MIT",
+	"scripts": {
+		"build": "npx tailwindcss -i ./src/css/tailwind.css -o ./src/css/app.css ",
+		"watch": "npx tailwindcss -i ./src/css/tailwind.css -o ./src/css/app.css --watch"
+	},
+	"devDependencies": {
+		"tailwindcss": "^3.3.5"
+	}
+}

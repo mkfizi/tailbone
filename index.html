@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en"
+    x-data="{
+        // Handle dark mode toggle when the page is loaded
+        theme: localStorage.theme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'), 
+        
+        // Workaround fix to handle viewport height issue on mobile browsers
+        // https://stackoverflow.com/questions/37112218/css3-100vh-not-constant-in-mobile-browser
+        viewportHeight: (window.innerHeight * 0.01) + 'px'
+    }"
+    :class="theme == 'dark' ? 'dark' : ''"
+    :style="{ 
+        '--vh': viewportHeight
+    }"
+    @resize.window="viewportHeight = (window.innerHeight * 0.01) + 'px'"
+>
+<head>
+    <!-- Metadata -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- SEO -->
+    <meta name="title" content="Tailbone">
+    <meta name="description" content="TailwindCSS UX Skeleton Generator.">
+    <meta name="robots" content="index, follow">
+ 
+    <!-- Facebook open graph -->
+    <meta property="og:url" content="https://mkfizi.dev/tailbone">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tailbone">
+    <meta property="og:image" content="https://mkfizi.dev/src/images/fb-og.jpg">
+    <meta name="description" content="TailwindCSS UX Skeleton Generator.">
+    <meta property="og:site_name" content="Tailbone">
+
+    <!-- Twitter cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@mkfizi">
+    <meta name="twitter:creator" content="@mkfizi">
+    <meta name="twitter:url" content="https://mkfizi.dev/tailbone">
+    <meta name="twitter:title" content="Tailbone">
+    <meta name="twitter:description" content="TailwindCSS UX Skeleton Generator.">
+    <meta name="twitter:image" content="https://mkfizi.dev/src/images/tw-card.jpg">
+
+    <!-- Favicon -->
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./src/css/app.css">
+    <link rel="preload" href="./src/css/app.css" as="style">
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="./src/js/app.js" defer></script>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" as="script">
+    <link rel="preload" href="./src/js/app.js" as="script">
+
+    <title>Tailbone - TailwindCSS UX Skeleton Generator</title>
+</head>
+<body class="relative min-h-screen antialiased bg-white dark:bg-neutral-900"
+    x-data="{ 
+        breakpointSize: 1024,
+        elements: null,
+        isAnimationEnabled: null,
+        presets: {
+            preset1: {
+                title: 'Preset 1',
+                elements: [
+                    {
+                        type: 'container',
+                        isSelected: false,
+                        classes: {
+                            display: 'flex',
+                            direction: 'flex-row',
+                            gap: 'gap-2'
+                        },
+                        childs: [
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-12',
+                                    width: 'w-12',
+                                    rounded: 'rounded-full'
+                                }
+                            },
+                            {
+                                type: 'container',
+                                isSelected: false,
+                                classes: {
+                                        display: 'flex',
+                                        direction: 'flex-col',
+                                        gap: 'gap-1'
+                                },
+                                childs: [
+                                    {
+                                        type: 'skeleton',
+                                        isSelected: false,
+                                        classes: {
+                                            height: 'h-4',
+                                            width: 'w-24',
+                                            rounded: 'rounded-md',
+                                            marginTop: 'mt-2'
+                                        }
+                                    },
+                                    {
+                                        type: 'skeleton',
+                                        isSelected: false,
+                                        classes: {
+                                            height: 'h-2',
+                                            width: 'w-16',
+                                            rounded: 'rounded-md'
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        // Create object in AlpineJS `x-data` format
+        createObj(obj) {
+            dataObj = ``;
+            for (const [key, value] of Object.entries(obj)) {
+                dataObj += `${key}: '${value}',`;
+            }
+            return dataObj;
+        },
+
+        // Create data in AlpineJS `x-data` format
+        createData(element) {
+            dataObj = `[`;
+            element.forEach((obj) => {
+                dataObj += `{`;
+                for (const [key, value] of Object.entries(obj)) {
+                    if (typeof value === 'object' && !Array.isArray(value) ) {
+                        dataObj += `${key}: {`;
+                        dataObj += this.createObj(value);
+                        dataObj += `},`;
+                    } else if(Array.isArray(value)) {
+                        dataObj += `${key}: ${this.createData(value)}`;
+                    } else {
+                        dataObj += `${key}: '${value}',`;
+                    }
+                }
+                dataObj += `},`;
+            })
+            dataObj += `]`;
+            return dataObj;
+        },
+
+        // Draw canvas
+        drawCanvas(elements) {
+            if (elements) {
+                template = `<template 
+                                    x-data=&quot;{
+                                        elements${this.level}: ${this.createData(elements)}
+                                    }&quot;
+                                    x-for=&quot;element${this.level} in elements${this.level}&quot; hidden>
+                                <div 
+                                    :class=&quot;Object.values(element${this.level}.classes).join(' ')&quot;
+                                    x-init=&quot;
+                                        if (element${this.level}.type == 'skeleton') {
+                                            if (isAnimationEnabled == true) {
+                                                $el.classList.add('animate-pulse');
+                                            }
+                                            $el.classList.add('bg-neutral-300', 'dark:bg-neutral-700');
+                                        }
+                                        &quot;
+                                >`;
+                elements.forEach((element) => {
+                    if (element.type == 'container' && element.childs) {
+                        template += `<template x-if=&quot;element${this.level}.type == 'container'&quot;>`
+                        this.level = this.level + 1;
+                        template += this.drawCanvas(element.childs) ;
+                        template += `</template>`
+                    }
+                })
+
+                template += `</div></template>`;
+                return template;
+            }
+        }
+    }"
+    x-init="
+        // Initialize local storage
+        elements = JSON.parse(localStorage.getItem('elements'));
+        isAnimationEnabled = localStorage.getItem('isAnimationEnabled');
+
+
+        if (!elements) {
+            localStorage.setItem('elements', JSON.stringify(presets.preset1.elements));
+            elements = JSON.parse(localStorage.getItem('elements'));
+        }
+
+        if(!isAnimationEnabled) {
+            localStorage.setItem('isAnimationEnabled', true);
+            isAnimationEnabled = localStorage.getItem('isAnimationEnabled');
+        }
+    "
+>
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-10 bg-white border-b dark:bg-neutral-900"
+        x-data="{
+            navbarHeight: null,
+            isScrolled: false, 
+            isNavbarMenuOpen: false, 
+        }"
+        x-init="
+            navbarHeight = $el.clientHeight;
+            isScrolled = window.scrollY > 0;
+        "
+        :class="isScrolled ? 'border-neutral-300 dark:border-neutral-700 shadow' : 'border-transparent dark:border-transparent'"
+        @scroll.window="
+
+            // Toggle navbar appearance
+            isScrolled = window.scrollY > 0;
+        "
+    >
+        <div class="flex items-center justify-between w-full h-16 max-w-screen-xl px-4 mx-auto sm:px-8">
+
+            <!-- Logo -->
+            <a href="#" class="flex gap-4">
+                <img src="./src/images/logo.png" alt="Logo" class="w-6 h-6 dark:hidden">
+                <img src="./src/images/logo-dark.png" alt="Logo" class="hidden w-6 h-6 dark:block">
+                <span class="text-lg font-bold text-black dark:text-white">Tailbone</span>
+            </a>
+
+            <div class="flex items-center gap-8">
+
+                <!-- Navbar menu -->
+                <div id="navbar-menu" class="fixed top-0 left-0 z-20 invisible hidden w-screen h-screen lg:block lg:visible lg:relative lg:w-auto lg:h-auto lg:left-auto lg:top-auto lg:z-0"
+                    :class="{ 
+                        'hidden invisible': !isNavbarMenuOpen 
+                    }"
+                    :aria-hidden="isNavbarMenuOpen ? false : true"
+                    x-data="{
+                        sections: document.querySelectorAll('section'),
+                        isSectionActive: {},
+
+                        // Handle when switching view between breakpoint size
+                        toggleResponsive() {
+                            
+                            // If window width past breakpoint size, close navbar menu and remove `[aria-hidden]` attribute from it
+                            if (window.innerWidth >= breakpointSize) {
+                                if ($el.getAttribute('aria-hidden') === 'true') {
+                                    isNavbarMenuOpen = false
+                                }
+                                $el.removeAttribute('aria-hidden');
+                            } else {
+                                if (!$el.getAttribute('aria-hidden')) {
+                                    $el.setAttribute('aria-hidden', true);
+                                }
+                            }
+                        }, 
+                        
+                        // Toggle active navbar menu link
+                        toggleActiveLink() {
+                            scrollPosition = window.scrollY;
+                            this.sections.forEach((targetSection) => {
+                                const sectionTop = targetSection.offsetTop - navbarHeight - parseFloat(getComputedStyle(targetSection).marginTop);
+                                const sectionHeight = targetSection.offsetHeight + parseFloat(getComputedStyle(targetSection).marginTop);
+                                
+                                this.isSectionActive[targetSection.id] = false;
+                                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                                    this.isSectionActive[targetSection.id] = true;
+                                }
+                            });
+                        }
+                    }"
+                    x-init="
+                        $watch('isNavbarMenuOpen', isNavbarMenuOpen => { 
+
+                            // Force focus before initialize focus trap
+                            if (isNavbarMenuOpen) {
+                                $el.setAttribute('tabindex', 1);
+                                $el.focus();
+                                setTimeout(() => {
+                                    $el.removeAttribute('tabindex');
+                                }, 100);
+                            }
+                        })
+                        
+                        toggleResponsive();
+                        toggleActiveLink();
+                    "
+                    @keydown.escape.window="isNavbarMenuOpen = false"
+                    @keydown.tab.window="
+                        
+                        // Focus trap handler 
+                        event => {
+                            if (isNavbarMenuOpen) {
+                                const focusableElements = Array.from($el.querySelectorAll(`a, button, input, textarea, select, details, [tabindex], [contenteditable='true']`)).filter(element => {
+                                    return !element.closest(`[tabindex='-1'], .hidden, .invisible`) || null;
+                                });
+                                const firstElement = focusableElements[0];
+                                const lastElement = focusableElements[focusableElements.length - 1];
+                    
+                                if (event.shiftKey && (document.activeElement === firstElement || document.activeElement === document.body)) {
+                                    event.preventDefault();
+                                    lastElement.focus();
+                                } else if (!event.shiftKey && document.activeElement === lastElement) {
+                                    event.preventDefault();
+                                    firstElement.focus();
+                                }
+                            }
+                        }
+                    "
+                    @resize.window="toggleResponsive()"
+                    @scroll.window="toggleActiveLink()"
+                >
+                    <div class="fixed top-0 left-0 w-full h-full px-4 py-4 overflow-y-auto bg-white sm:px-8 lg:relative lg:h-auto lg:px-0 lg:py-0 dark:bg-neutral-800 lg:bg-transparent lg:dark:bg-transparent lg:w-auto" aria-labelledby="navbar-menu">
+                        
+                        <!-- Navbar menu close button -->
+                        <button id="navbar-menu-close" type="button" class="absolute lg:hidden right-4 sm:right-8 top-4 group" aria-controls="navbar-menu" aria-label="Close navbar menu"
+                            :aria-expanded="isNavbarMenuOpen ? true : false"
+                            @click="isNavbarMenuOpen = false"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M18 6l-12 12" />
+                                <path d="M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <!-- Navbar menu link -->
+                        <ul class="space-y-4 lg:space-y-0 lg:flex lg:gap-8"
+                            x-data="{
+                                links: [
+                                    { 
+                                        url: '#how-to-use', 
+                                        title: 'How to use?'
+                                    }
+                                ]
+                            }"
+                        >
+                            <template x-for="link in links" hidden>
+                                <li>
+                                    <a class="block font-semibold hover:text-black dark:hover:text-white"
+                                        :href="link.url" 
+                                        :class="isSectionActive[`${$el.getAttribute('href').substring(1)}`] ? 'text-black dark:text-white' : 'text-neutral-500 dark:text-neutral-400'"
+                                        x-text="link.title"
+                                    ></a>
+                                </li>
+                            </template>
+                        </ul>
+
+                    </div>
+                </div>
+                
+                <!-- Divider -->
+                <div class="hidden w-px h-8 lg:block bg-neutral-300 dark:bg-neutral-700"></div>
+                
+                <div class="flex items-center gap-4">
+
+                    <!-- Dark mode toggle button -->
+                    <button type="button" class="group" aria-label="Toggle dark mode"
+                        x-data="{ 
+                            isDarkMode: ''
+                        }"
+                        @click="
+                        
+                            // Toggle dark mode
+                            isDarkMode = localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches);
+                            localStorage.theme = isDarkMode ? 'dark' : 'light';
+                            document.documentElement.classList.toggle('dark', isDarkMode);
+                        "
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 dark:hidden stroke-neutral-500 group-hover:stroke-black" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                            <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="hidden w-6 h-6 dark:block dark:stroke-neutral-400 group-hover:stroke-white" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+                        </svg>
+                    </button>
+
+                    <a href="https://github.com/mkfizi/tailbone" target="_blank" class="group" aria-label="Go to Github repository">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+                        </svg>
+                    </a>
+
+                    <!-- Navbar menu open button -->
+                    <button type="button" class="lg:hidden group" aria-controls="navbar-menu" aria-expanded="false" aria-label="Open navbar menu"
+                        :aria-expanded="isNavbarMenuOpen ? true : false"
+                        @click="isNavbarMenuOpen = true"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                        </svg>
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="w-full max-w-screen-xl px-4 pt-16 pb-32 mx-auto sm:px-8">
+        <header class="max-w-screen-md mx-auto text-center">
+            <h1 class="text-4xl font-black text-black sm:text-5xl lg:text-6xl dark:text-white">UX Skeleton Generator</h1>
+            <h2 class="mt-4 text-lg text-black sm:text-xl lg:text-2xl dark:text-white">Generate your personalised UX skeleton screen with <span class="font-bold text-neutral-600 dark:text-neutral-400">TailwindCSS</span></h2>
+        </header>
+
+        <section class="grid gap-8 pt-32 lg:grid-cols-4 lg:flex-row">
+            
+            <div class="p-4 border rounded-md lg:col-span-3 border-neutral-300 dark:border-neutral-700">
+            
+                <!-- Menu -->
+                <div class="flex justify-between gap-4">
+                    <button type="button" class="p-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" />
+                            <path d="M18 13.3l-6.3 -6.3" />
+                        </svg>
+                    </button>
+                    <div class="relative inline-block"
+                        x-data="{ 
+                            isOpen: false 
+                        }" 
+                        @click.outside="isOpen = false"
+                        @keydown.escape.window="isOpen = false"
+                    >
+                        <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
+                            :aria-expanded="isOpen ? true : false"
+                            @click="isOpen = !isOpen"
+                        >
+                            <span>Presets</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                        </button>
+                        <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
+                            :class="{ 
+                                'hidden invisible': !isOpen 
+                            }"
+                            :aria-hidden="isOpen ? false : true"
+                        >
+                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
+                            </li>
+                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
+                            </li>
+                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Canvas -->   
+                <div id="canvas" class="max-w-lg mx-auto my-16"
+                    x-init="
+                        level = 0;
+                        $watch('isAnimationEnabled', (isAnimationEnabled) => {
+                            $el.innerHTML = drawCanvas(elements);
+                        });
+                    "
+                    x-html="drawCanvas(elements)"
+                >
+                </div>         
+            </div>
+
+            <!-- Configurations -->
+            <div class="border rounded-md lg:col-span-1 border-neutral-300 dark:border-neutral-700">
+                <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Configurations</p>
+                <div class="flex items-center gap-2 px-4 pb-4">
+                    <input id="animation" type="checkbox" name="checkbox" class="accent-neutral-700 dark:accent-neutral-300 disabled:opacity-50 disabled:pointer-events-none" 
+                        :checked="isAnimationEnabled == true ? true : false"
+                        @click="
+                            isAnimationEnabled = !isAnimationEnabled;
+                            localStorage.setItem('isAnimationEnabled', isAnimationEnabled);
+                        "
+                    >
+                    <label for="animation" class="text-base text-neutral-700 dark:text-neutral-300">Enable Animation</label>
+                </div>  
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="absolute bottom-0 w-full max-w-screen-xl px-4 pb-px text-center transform -translate-x-1/2 left-1/2 sm:px-8">
+        <p class="text-sm text-neutral-700 dark:text-neutral-300"><span id="footer-app-name"></span> v<span id="footer-app-version"></span></p>
+        <span class="text-sm text-neutral-700 dark:text-neutral-300"><span id="footer-year"></span> © Developed by <a href="https://mkfizi.dev" target="_blank" class="inline-block font-semibold text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">mkfizi</a></span>
+    </footer>
+</body>
+</html>
