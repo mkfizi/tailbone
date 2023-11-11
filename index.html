@@ -127,8 +127,9 @@
                 ]
             }
         },
-        // Create object in AlpineJS `x-data` format
-        createObj(obj) {
+        
+        // Convert object in AlpineJS `x-data` format
+        convertObj(obj) {
             dataObj = ``;
             for (const [key, value] of Object.entries(obj)) {
                 dataObj += `${key}: '${value}',`;
@@ -136,18 +137,18 @@
             return dataObj;
         },
 
-        // Create data in AlpineJS `x-data` format
-        createData(element) {
+        // Convert data in AlpineJS `x-data` format
+        convertData(element) {
             dataObj = `[`;
             element.forEach((obj) => {
                 dataObj += `{`;
                 for (const [key, value] of Object.entries(obj)) {
                     if (typeof value === 'object' && !Array.isArray(value) ) {
                         dataObj += `${key}: {`;
-                        dataObj += this.createObj(value);
+                        dataObj += this.convertObj(value);
                         dataObj += `},`;
                     } else if(Array.isArray(value)) {
-                        dataObj += `${key}: ${this.createData(value)}`;
+                        dataObj += `${key}: ${this.convertData(value)}`;
                     } else {
                         dataObj += `${key}: '${value}',`;
                     }
@@ -158,12 +159,18 @@
             return dataObj;
         },
 
-        // Draw canvas
-        drawCanvas(elements) {
+        // Draw layer
+        drawLayers(elements) {
+
+            
+        },
+
+        // Draw board
+        drawBoard(elements) {
             if (elements) {
                 template = `<template 
                                     x-data=&quot;{
-                                        elements${this.level}: ${this.createData(elements)}
+                                        elements${this.level}: ${this.convertData(elements)}
                                     }&quot;
                                     x-for=&quot;element${this.level} in elements${this.level}&quot; hidden>
                                 <div 
@@ -179,10 +186,12 @@
                                 >
                             `;
                 elements.forEach((element) => {
+
+                    // Recursive if element has childs
                     if (element.type == 'container' && element.childs) {
                         template += `<template x-if=&quot;element${this.level}.type == 'container'&quot;>`
                         this.level = this.level + 1;
-                        template += this.drawCanvas(element.childs) ;
+                        template += this.drawBoard(element.childs) ;
                         template += `</template>`
                     }
                 })
@@ -190,7 +199,9 @@
                 template += `</div></template>`;
                 return template;
             }
-        }
+        },
+
+        // Draw configuration
     }"
     x-init="
         // Initialize local storage
@@ -426,15 +437,15 @@
         </header>
 
         <section class="pt-32">
-            
-            <div class="grid border divide-y rounded-md lg:divide-y-0 lg:divide-x divide-neutral-300 dark:divide-neutral-700 border-neutral-300 dark:border-neutral-700 lg:grid-cols-3">
-            
-                <div class="p-4 lg:col-span-2">
+            <div class="grid overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
+                
+                <!-- Canvas -->
+                <div class="px-4 py-4 border-b sm:px-8 sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700">
 
-                    <!-- Menu -->
-                    <div class="flex justify-between gap-4">
+                    <!-- Canvas menu -->
+                    <div class="flex justify-between gap-4 mb-16">
 
-                        <!-- Clear button -->
+                        <!-- Clear canvas button -->
                         <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -450,7 +461,7 @@
                             @click.outside="isOpen = false"
                             @keydown.escape.window="isOpen = false"
                         >
-                            <!-- Presets dropdown -->
+                            <!-- Canvas presets dropdown -->
                             <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
                                 :aria-expanded="isOpen ? true : false"
                                 @click="isOpen = !isOpen"
@@ -480,21 +491,31 @@
                         </div>
                     </div>
 
-                    <!-- Canvas -->   
-                    <div id="canvas" class="max-w-lg mx-auto my-16"
+                    <!-- Canvas board -->   
+                    <div class="mb-12"
                         x-init="
                             level = 0;
                             $watch('isAnimationEnabled', (isAnimationEnabled) => {
-                                $el.innerHTML = drawCanvas(elements);
+                                $el.innerHTML = drawBoard(elements);
                             });
                         "
-                        x-html="drawCanvas(elements)"
+                        x-html="drawBoard(elements)"
                     >
                     </div>         
                 </div>
+                
+                <!-- Layers -->
+                <div class="bg-white border-b lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700">
+                    <div class="divide-y divide-neutral-300 dark:divide-neutral-700">
+                        <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Layers</p>
+                    </div>  
 
+                    <!-- put configuration here -->
+                </div>
+                
+                
                 <!-- Configurations -->
-                <div class="lg:col-span-1">
+                <div class="bg-white lg:order-3 dark:bg-neutral-800">
                     <div class="p-4">
                         <p class="mb-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Configurations</p>
                         <div class="flex items-center gap-2">
@@ -512,6 +533,8 @@
                             <label for="animation" class="text-base text-neutral-700 dark:text-neutral-300">Enable Animation</label>
                         </div>
                     </div>  
+
+                    <!-- put configuration here -->
                 </div>
             </div>
         </section>
