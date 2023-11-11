@@ -66,7 +66,7 @@
 <body class="relative min-h-screen antialiased bg-white dark:bg-neutral-900"
     x-data="{ 
         version: '0.1.0',
-        level: 0,
+        objectInstance: 0,
         breakpointSize: 1024,
         elements: null,
         isAnimationEnabled: true,
@@ -160,8 +160,76 @@
         },
 
         // Draw layer
-        drawLayers(elements) {
+        drawElements(elements) {
+            if (elements) {
+                template = `
+                    <template 
+                        x-data=&quot;{
+                            elements${this.objectInstance}: ${this.convertData(elements)}
+                        }&quot;
+                        x-for=&quot;element${this.objectInstance} in elements${this.objectInstance}&quot; hidden
+                    >
+                        <div>
+                            <div class=&quot;relative group border border-transparent dark:border-transparent hover:border-black dark:hover:border-white&quot;>
+                                <button type=&quot;button&quot; class=&quot;py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white&quot; x-text=&quot;element${this.objectInstance}.type&quot;></button>
+                                <div class=&quot;top-0 z-10 absolute right-4 py-2 flex&quot;>
+                                    <template x-if=&quot;element${this.objectInstance}.type === 'container'&quot;>
+                                        <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Remove&quot;>
+                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                                <path d=&quot;M12 5l0 14&quot; />
+                                                <path d=&quot;M5 12l14 0&quot; />
+                                            </svg>
+                                        </button>
+                                    </template>
+                                    <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Remove&quot;>
+                                        <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                            <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                            <path d=&quot;M18 6l-12 12&quot; />
+                                            <path d=&quot;M6 6l12 12&quot; />
+                                        </svg>
+                                    </button>
+                                    <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Move up&quot;>
+                                        <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                            <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                            <path d=&quot;M12 5l0 14&quot; />
+                                            <path d=&quot;M18 11l-6 -6&quot; />
+                                            <path d=&quot;M6 11l6 -6&quot; />
+                                        </svg>
+                                    </button>
+                                    <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Move down&quot;>
+                                        <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                            <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                            <path d=&quot;M12 5l0 14&quot; />
+                                            <path d=&quot;M18 13l-6 6&quot; />
+                                            <path d=&quot;M6 13l6 6&quot; />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                `;
 
+                elements.forEach((element) => {
+
+                    // Recursive if element has childs
+                    if (element.type == 'container' && element.childs) {
+                        template += `
+                            <div class=&quot;ml-4 relative&quot;>
+                                <div class=&quot;h-full w-px py-2 absolute&quot;>
+                                    <div class=&quot;h-full w-px bg-neutral-300 dark:bg-neutral-700&quot;></div>
+                                </div>
+                        `;
+                        this.objectInstance = this.objectInstance + 1;
+                        template += this.drawElements(element.childs) ;
+                        this.objectInstance = this.objectInstance - 1;
+                        template += `</div>`;
+                    }
+                })
+
+                return template;
+            }
             
         },
 
@@ -169,14 +237,15 @@
         drawBoard(elements) {
             if (elements) {
                 template = `<template 
-                                    x-data=&quot;{
-                                        elements${this.level}: ${this.convertData(elements)}
-                                    }&quot;
-                                    x-for=&quot;element${this.level} in elements${this.level}&quot; hidden>
+                                x-data=&quot;{
+                                    elements${this.objectInstance}: ${this.convertData(elements)}
+                                }&quot;
+                                x-for=&quot;element${this.objectInstance} in elements${this.objectInstance}&quot; hidden
+                            >
                                 <div 
-                                    :class=&quot;Object.values(element${this.level}.classes).join(' ')&quot;
+                                    :class=&quot;Object.values(element${this.objectInstance}.classes).join(' ')&quot;
                                     x-init=&quot;
-                                        if (element${this.level}.type == 'skeleton') {
+                                        if (element${this.objectInstance}.type == 'skeleton') {
                                             if (isAnimationEnabled == true) {
                                                 $el.classList.add('animate-pulse');
                                             }
@@ -184,15 +253,17 @@
                                         }
                                         &quot;
                                 >
-                            `;
+                `;
+
                 elements.forEach((element) => {
 
                     // Recursive if element has childs
                     if (element.type == 'container' && element.childs) {
-                        template += `<template x-if=&quot;element${this.level}.type == 'container'&quot;>`
-                        this.level = this.level + 1;
+                        template += `<template x-if=&quot;element${this.objectInstance}.type == 'container'&quot;>`
+                        this.objectInstance = this.objectInstance + 1;
                         template += this.drawBoard(element.childs) ;
                         template += `</template>`
+                        this.objectInstance = this.objectInstance - 1;
                     }
                 })
 
@@ -437,64 +508,59 @@
         </header>
 
         <section class="pt-32">
+
+            <!-- Menu -->
+            <div class="flex justify-between gap-4 mb-4">
+
+                <!-- New canvas button -->
+                <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Create new">Create New</button>
+                
+                <div class="relative inline-block"
+                    x-data="{ 
+                        isOpen: false 
+                    }" 
+                    @click.outside="isOpen = false"
+                    @keydown.escape.window="isOpen = false"
+                >
+                    <!-- Canvas presets dropdown -->
+                    <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
+                        :aria-expanded="isOpen ? true : false"
+                        @click="isOpen = !isOpen"
+                    >
+                        <span>Presets</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M6 9l6 6l6 -6" />
+                        </svg>
+                    </button>
+                    <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
+                        :class="{ 
+                            'hidden invisible': !isOpen 
+                        }"
+                        :aria-hidden="isOpen ? false : true"
+                    >
+                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
+                        </li>
+                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
+                        </li>
+                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="grid overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
                 
                 <!-- Canvas -->
-                <div class="px-4 py-4 border-b sm:px-8 sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700">
+                <div class="border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700">
 
-                    <!-- Canvas menu -->
-                    <div class="flex justify-between gap-4 mb-16">
-
-                        <!-- Clear canvas button -->
-                        <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                            </svg>
-                        </button>
-                        
-                        <div class="relative inline-block"
-                            x-data="{ 
-                                isOpen: false 
-                            }" 
-                            @click.outside="isOpen = false"
-                            @keydown.escape.window="isOpen = false"
-                        >
-                            <!-- Canvas presets dropdown -->
-                            <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
-                                :aria-expanded="isOpen ? true : false"
-                                @click="isOpen = !isOpen"
-                            >
-                                <span>Presets</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M6 9l6 6l6 -6" />
-                                </svg>
-                            </button>
-                            <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
-                                :class="{ 
-                                    'hidden invisible': !isOpen 
-                                }"
-                                :aria-hidden="isOpen ? false : true"
-                            >
-                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
-                                </li>
-                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
-                                </li>
-                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
+                    
                     <!-- Canvas board -->   
-                    <div class="mb-12"
+                    <div class="mx-4 my-16 sm:mx-8"
                         x-init="
-                            level = 0;
                             $watch('isAnimationEnabled', (isAnimationEnabled) => {
                                 $el.innerHTML = drawBoard(elements);
                             });
@@ -504,13 +570,18 @@
                     </div>         
                 </div>
                 
-                <!-- Layers -->
-                <div class="bg-white border-b lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700">
-                    <div class="divide-y divide-neutral-300 dark:divide-neutral-700">
-                        <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Layers</p>
-                    </div>  
+                <!-- Elements -->
+                <div class="bg-white border-b divide-y lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700 divide-neutral-300 dark:divide-neutral-700">
+                    <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Elements</p>
 
-                    <!-- put configuration here -->
+                    <template x-if="elements.length > 0" hidden>
+                        <div
+                            x-html="drawElements(elements)"
+                        >
+                        </div>
+                    </template>
+
+                    <p>test</p>
                 </div>
                 
                 
