@@ -65,9 +65,11 @@
 </head>
 <body class="relative min-h-screen antialiased bg-white dark:bg-neutral-900"
     x-data="{ 
+        version: '0.1.0',
+        level: 0,
         breakpointSize: 1024,
         elements: null,
-        isAnimationEnabled: null,
+        isAnimationEnabled: true,
         presets: {
             preset1: {
                 title: 'Preset 1',
@@ -174,7 +176,8 @@
                                             $el.classList.add('bg-neutral-300', 'dark:bg-neutral-700');
                                         }
                                         &quot;
-                                >`;
+                                >
+                            `;
                 elements.forEach((element) => {
                     if (element.type == 'container' && element.childs) {
                         template += `<template x-if=&quot;element${this.level}.type == 'container'&quot;>`
@@ -191,18 +194,23 @@
     }"
     x-init="
         // Initialize local storage
-        elements = JSON.parse(localStorage.getItem('elements'));
-        isAnimationEnabled = localStorage.getItem('isAnimationEnabled');
+        
+        elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
+        isAnimationEnabled = localStorage.isAnimationEnabled;
 
-
-        if (!elements) {
-            localStorage.setItem('elements', JSON.stringify(presets.preset1.elements));
-            elements = JSON.parse(localStorage.getItem('elements'));
+        if (elements == null) {
+            localStorage.elements = JSON.stringify(presets.preset1.elements);
+            elements = JSON.parse(localStorage.elements);
         }
 
-        if(!isAnimationEnabled) {
-            localStorage.setItem('isAnimationEnabled', true);
-            isAnimationEnabled = localStorage.getItem('isAnimationEnabled');
+        if(isAnimationEnabled == null) {
+            localStorage.isAnimationEnabled = true;
+            isAnimationEnabled = localStorage.isAnimationEnabled;
+        }
+
+        if(localStorage.version == null) {
+            localStorage.version = version;
+            version = localStorage.version;
         }
     "
 >
@@ -417,88 +425,101 @@
             <h2 class="mt-4 text-lg text-black sm:text-xl lg:text-2xl dark:text-white">Generate your personalised UX skeleton screen with <span class="font-bold text-neutral-600 dark:text-neutral-400">TailwindCSS</span></h2>
         </header>
 
-        <section class="grid gap-8 pt-32 lg:grid-cols-4 lg:flex-row">
+        <section class="pt-32">
             
-            <div class="p-4 border rounded-md lg:col-span-3 border-neutral-300 dark:border-neutral-700">
+            <div class="grid border divide-y rounded-md lg:divide-y-0 lg:divide-x divide-neutral-300 dark:divide-neutral-700 border-neutral-300 dark:border-neutral-700 lg:grid-cols-3">
             
-                <!-- Menu -->
-                <div class="flex justify-between gap-4">
-                    <button type="button" class="p-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" />
-                            <path d="M18 13.3l-6.3 -6.3" />
-                        </svg>
-                    </button>
-                    <div class="relative inline-block"
-                        x-data="{ 
-                            isOpen: false 
-                        }" 
-                        @click.outside="isOpen = false"
-                        @keydown.escape.window="isOpen = false"
-                    >
-                        <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
-                            :aria-expanded="isOpen ? true : false"
-                            @click="isOpen = !isOpen"
-                        >
-                            <span>Presets</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
+                <div class="p-4 lg:col-span-2">
+
+                    <!-- Menu -->
+                    <div class="flex justify-between gap-4">
+
+                        <!-- Clear button -->
+                        <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M6 9l6 6l6 -6" />
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
                             </svg>
                         </button>
-                        <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
-                            :class="{ 
-                                'hidden invisible': !isOpen 
-                            }"
-                            :aria-hidden="isOpen ? false : true"
+                        
+                        <div class="relative inline-block"
+                            x-data="{ 
+                                isOpen: false 
+                            }" 
+                            @click.outside="isOpen = false"
+                            @keydown.escape.window="isOpen = false"
                         >
-                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
-                            </li>
-                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
-                            </li>
-                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
-                            </li>
-                        </ul>
+                            <!-- Presets dropdown -->
+                            <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
+                                :aria-expanded="isOpen ? true : false"
+                                @click="isOpen = !isOpen"
+                            >
+                                <span>Presets</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </button>
+                            <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
+                                :class="{ 
+                                    'hidden invisible': !isOpen 
+                                }"
+                                :aria-hidden="isOpen ? false : true"
+                            >
+                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
+                                </li>
+                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
+                                </li>
+                                <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                    <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+
+                    <!-- Canvas -->   
+                    <div id="canvas" class="max-w-lg mx-auto my-16"
+                        x-init="
+                            level = 0;
+                            $watch('isAnimationEnabled', (isAnimationEnabled) => {
+                                $el.innerHTML = drawCanvas(elements);
+                            });
+                        "
+                        x-html="drawCanvas(elements)"
+                    >
+                    </div>         
                 </div>
 
-                <!-- Canvas -->   
-                <div id="canvas" class="max-w-lg mx-auto my-16"
-                    x-init="
-                        level = 0;
-                        $watch('isAnimationEnabled', (isAnimationEnabled) => {
-                            $el.innerHTML = drawCanvas(elements);
-                        });
-                    "
-                    x-html="drawCanvas(elements)"
-                >
-                </div>         
-            </div>
-
-            <!-- Configurations -->
-            <div class="border rounded-md lg:col-span-1 border-neutral-300 dark:border-neutral-700">
-                <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Configurations</p>
-                <div class="flex items-center gap-2 px-4 pb-4">
-                    <input id="animation" type="checkbox" name="checkbox" class="accent-neutral-700 dark:accent-neutral-300 disabled:opacity-50 disabled:pointer-events-none" 
-                        :checked="isAnimationEnabled == true ? true : false"
-                        @click="
-                            isAnimationEnabled = !isAnimationEnabled;
-                            localStorage.setItem('isAnimationEnabled', isAnimationEnabled);
-                        "
-                    >
-                    <label for="animation" class="text-base text-neutral-700 dark:text-neutral-300">Enable Animation</label>
-                </div>  
+                <!-- Configurations -->
+                <div class="lg:col-span-1">
+                    <div class="p-4">
+                        <p class="mb-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Configurations</p>
+                        <div class="flex items-center gap-2">
+                            <input id="animation" type="checkbox" name="checkbox" class="accent-neutral-700 dark:accent-neutral-300 disabled:opacity-50 disabled:pointer-events-none" 
+                                :checked="isAnimationEnabled"
+                                @click="isAnimationEnabled = !isAnimationEnabled"
+                                x-init="
+                                    isAnimationEnabled = localStorage.isAnimationEnabled === 'true';
+                                    
+                                    $watch('isAnimationEnabled', (isAnimationEnabled) => {
+                                        localStorage.isAnimationEnabled = isAnimationEnabled;
+                                    });
+                                "
+                            >
+                            <label for="animation" class="text-base text-neutral-700 dark:text-neutral-300">Enable Animation</label>
+                        </div>
+                    </div>  
+                </div>
             </div>
         </section>
     </main>
     
     <!-- Footer -->
     <footer class="absolute bottom-0 w-full max-w-screen-xl px-4 pb-px text-center transform -translate-x-1/2 left-1/2 sm:px-8">
-        <p class="text-sm text-neutral-700 dark:text-neutral-300"><span id="footer-app-name"></span> v<span id="footer-app-version"></span></p>
+        <p class="text-sm text-neutral-700 dark:text-neutral-300"><span id="footer-app-name"></span> v<span x-text="version"></span></p>
         <span class="text-sm text-neutral-700 dark:text-neutral-300"><span id="footer-year"></span> © Developed by <a href="https://mkfizi.dev" target="_blank" class="inline-block font-semibold text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">mkfizi</a></span>
     </footer>
 </body>

@@ -11,12 +11,10 @@
     const app = {};
 
     app.name = 'Tailbone';
-    app.version = '0.1.0';
 
     app.element = {
         footerCurrentYear: document.getElementById('footer-year'),
         footerAppName: document.getElementById('footer-app-name'),
-        footerAppVersion: document.getElementById('footer-app-version'),
     }
 
     app.view = {
@@ -30,10 +28,6 @@
 
                 if (app.element.footerAppName) {
                     app.element.footerAppName.innerHTML = app.name;
-                }
-
-                if (app.element.footerAppVersion) {
-                    app.element.footerAppVersion.innerHTML = app.version;
                 }
             }
         },
