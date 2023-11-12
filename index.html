@@ -146,7 +146,9 @@
             ].join(' ').trim()
         },
 
-        // Deselect isSelected element
+        // Select element
+
+        // Deselect element
         deselect(elements = this.elements) {
             elements.forEach((element) => {
                 element.isSelected = false;
@@ -155,31 +157,49 @@
                     this.deselect(element.childs);
                 }
             })
+        },
+
+        assignUniqueIds(elements, parentId = '') {
+            elements.forEach((element, index) => {
+                const uniqueId = parentId + '_' + index; // Creating a unique ID
+        
+                // Assigning the unique ID to the current element
+                element.id = uniqueId;
+        
+                if (element.childs && element.childs.length > 0) {
+                    // Recursively assign IDs to child elements
+                    this.assignUniqueIds(element.childs, uniqueId);
+                }
+            });
+        },
+
+        // Initialize local storage
+        initializeLocalStorage() {
+            this.elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
+            this.isAnimationEnabled = localStorage.isAnimationEnabled;
+    
+            if (this.elements == null) {
+                this.element = this.presets.preset1.elements;
+                this.assignUniqueIds(this.element);
+                localStorage.elements = JSON.stringify(this.element);
+                this.elements = JSON.parse(localStorage.elements);
+            }
+    
+            if(this.isAnimationEnabled == null) {
+                localStorage.isAnimationEnabled = true;
+                this.isAnimationEnabled = localStorage.isAnimationEnabled;
+            }
+    
+            if(localStorage.version == null) {
+                localStorage.version = this.version;
+                this.version = localStorage.version;
+            }
         }
     }"
     x-init="
-        // Initialize local storage
-        
-        elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
-        isAnimationEnabled = localStorage.isAnimationEnabled;
-
-        if (elements == null) {
-            localStorage.elements = JSON.stringify(presets.preset1.elements);
-            elements = JSON.parse(localStorage.elements);
-        }
-
-        if(isAnimationEnabled == null) {
-            localStorage.isAnimationEnabled = true;
-            isAnimationEnabled = localStorage.isAnimationEnabled;
-        }
-
-        if(localStorage.version == null) {
-            localStorage.version = version;
-            version = localStorage.version;
-        }
+        initializeLocalStorage();
 
         $watch('elements', (elements) => {
-            // localStorage.isAnimationEnabled = isAnimationEnabled;
             localStorage.elements = JSON.stringify(elements);
         })
     "
@@ -464,6 +484,7 @@
                                                 :class=&quot;{ 
                                                     'outline outline-2 outline-black dark:outline-white': isSelected
                                                 }&quot;
+                                                @click=&quot;select&quot;
                                             >
                                         `
 
