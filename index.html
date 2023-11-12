@@ -147,6 +147,19 @@
         },
 
         // Select element
+        select(id, elements = this.elements) {
+            elements.forEach((element) => {
+                if (element.id == id) {
+                    element.isSelected = true;
+                } else {
+                    element.isSelected = false;
+                }
+
+                if (element.childs) {
+                    this.select(id, element.childs);
+                }
+            })
+        },
 
         // Deselect element
         deselect(elements = this.elements) {
@@ -477,14 +490,14 @@
                                     template = '';
                                     elements.forEach((element) => {
                                         template += `
-                                            <div class=&quot;${addClass(element.type, element.classes)}&quot;
+                                            <div id=&quot;${element.id}&quot; class=&quot;${addClass(element.type, element.classes)}&quot;
                                                 x-data=&quot;{
                                                     isSelected: ${element.isSelected}
                                                 }&quot;
                                                 :class=&quot;{ 
-                                                    'outline outline-2 outline-black dark:outline-white': isSelected
+                                                    'outline outline-1 outline-black dark:outline-white': isSelected
                                                 }&quot;
-                                                @click=&quot;select&quot;
+                                                @click.stop=&quot;select($el.id)&quot;
                                             >
                                         `
 
@@ -529,7 +542,9 @@
                                             }&quot;
                                             :class=&quot;isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
                                         >
-                                            <button type=&quot;button&quot; class=&quot;py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white&quot;>${element.type}</button>
+                                            <button type=&quot;button&quot; class=&quot;py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white&quot; data-target=&quot;${element.id}&quot;
+                                                @click=&quot;select($el.dataset.target)&quot;
+                                            >${element.type}</button>
                                             <div class=&quot;top-0 z-10 absolute right-4 py-2 flex&quot;>
                                     `;
 
