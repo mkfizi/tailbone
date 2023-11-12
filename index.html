@@ -490,11 +490,11 @@
                                     template = '';
                                     elements.forEach((element) => {
                                         template += `
-                                            <div id=&quot;${element.id}&quot; class=&quot;${addClass(element.type, element.classes)}&quot;
+                                            <div id=&quot;${element.id}&quot; class=&quot; ${addClass(element.type, element.classes)}&quot;
                                                 x-data=&quot;{
                                                     isSelected: ${element.isSelected}
                                                 }&quot;
-                                                :class=&quot;{ 
+                                                :class=&quot; { 
                                                     'outline outline-1 outline-black dark:outline-white': isSelected
                                                 }&quot;
                                                 @click.stop=&quot;select($el.id)&quot;
@@ -536,22 +536,22 @@
                                 template = '';
                                 elements.forEach((element, key) => {
                                     template += `
-                                        <div class=&quot;relative border group&quot;
+                                        <div class=&quot; relative border group &quot;
                                             x-data=&quot;{
                                                 isSelected: ${element.isSelected}
                                             }&quot;
-                                            :class=&quot;isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
+                                            :class=&quot; isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
                                         >
-                                            <button type=&quot;button&quot; class=&quot;py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white&quot; data-target=&quot;${element.id}&quot;
+                                            <button type=&quot;button&quot; class=&quot; py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white &quot; data-target=&quot;${element.id}&quot;
                                                 @click=&quot;select($el.dataset.target)&quot;
                                             >${element.type}</button>
-                                            <div class=&quot;top-0 z-10 absolute right-4 py-2 flex&quot;>
+                                            <div class=&quot; top-0 z-10 absolute right-4 py-2 flex &quot;>
                                     `;
 
                                     if (element.type === 'container') {
                                         template +=`
-                                                <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Create child element&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Create child element&quot;>
+                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                         <path d=&quot;M12 5l0 14&quot; />
                                                         <path d=&quot;M5 12l14 0&quot; />
@@ -561,23 +561,23 @@
                                     }
                                                     
                                     template += `
-                                                <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Remove element&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;>
+                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                         <path d=&quot;M18 6l-12 12&quot; />
                                                         <path d=&quot;M6 6l12 12&quot; />
                                                     </svg>
                                                 </button>
-                                                <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Move element up&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element up&quot;>
+                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                         <path d=&quot;M12 5l0 14&quot; />
                                                         <path d=&quot;M18 11l-6 -6&quot; />
                                                         <path d=&quot;M6 11l6 -6&quot; />
                                                     </svg>
                                                 </button>
-                                                <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Move element down&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-6 w-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element down&quot;>
+                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                         <path d=&quot;M12 5l0 14&quot; />
                                                         <path d=&quot;M18 13l-6 6&quot; />
@@ -592,16 +592,17 @@
                                     // Draw elements sidebar recursively if element contains child
                                     if (element.childs) {
                                         template += `
-                                            <div class=&quot;ml-4 relative&quot;>
-                                                <div class=&quot;h-full w-px absolute bg-neutral-300 dark:bg-neutral-700&quot;></div>
+                                            <div class=&quot; ml-4 relative &quot;>
+                                                <div class=&quot; h-full w-px absolute bg-neutral-300 dark:bg-neutral-700 &quot;></div>
                                         `;
                                         template += this.drawElementsSidebar(element.childs);
                                         template += `
-                                            <div>
+                                            </div>
                                         `;
                                     }
                                 });
 
+                                console.log(template)
                                 return template;
                             }
                         }"
@@ -641,12 +642,12 @@
                                 elements.forEach((element) => {
                                     if (element.isSelected) {
                                         template += `
-                                            <div class=&quot;flex justify-end mb-4&quot;>
-                                                <button type=&quot;button&quot; class=&quot;text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white&quot; aria-label=&quot;Deselect element&quot;
+                                            <div class=&quot; flex justify-end mb-4 &quot;>
+                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Deselect element&quot;
                                                     
                                                     @click=&quot;deselect()&quot;
                                                 >
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;w-6 h-6&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; w-6 h-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                         <path d=&quot;M18 6l-12 12&quot; />
                                                         <path d=&quot;M6 6l12 12&quot; />
@@ -656,25 +657,51 @@
                                         `;
                                         if (element.type == 'container') {
                                             template += `
-                                                <div class=&quot;space-y-2&quot;>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Direction</label>
-                                                        <div class=&quot;relative w-full&quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot;relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer&quot;>
-                                                                <option value=&quot;&quot; class=&quot;dark:bg-transparent&quot;>Row</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot;dark:bg-transparent&quot;>Column</option>
+                                                <div class=&quot; space-y-2 &quot;>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Direction</label>
+                                                        <div class=&quot; relative w-full &quot;>
+                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;>
+                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Row</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
                                                             </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                                 <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                                 <path d=&quot;M6 9l6 6l6 -6&quot; />
                                                             </svg>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Gap</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>100%</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Justify</label>
+                                                        <div class=&quot; relative w-full &quot;>
+                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none pee r&quot;>
+                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Normal</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
+                                                            </select>
+                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Align</label>
+                                                        <div class=&quot; relative w-full &quot;>
+                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;>
+                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Normal</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
+                                                            </select>
+                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Gap</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>100%</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -682,62 +709,62 @@
                                         } else if (element.type == 'skeleton') {
 
                                             template += `
-                                                <div class=&quot;space-y-2&quot;>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Rounded</label>
-                                                        <div class=&quot;relative w-full&quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot;relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer&quot;>
-                                                                <option value=&quot;&quot; class=&quot;dark:bg-transparent&quot;>Small</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot;dark:bg-transparent&quot;>Medium</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot;dark:bg-transparent&quot;>Large</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot;dark:bg-transparent&quot;>Full</option>
+                                                <div class=&quot; space-y-2 &quot;>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Rounded</label>
+                                                        <div class=&quot; relative w-full &quot;>
+                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer&quot;>
+                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Small</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Medium</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Large</option>
+                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Full</option>
                                                             </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                                                 <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                                                 <path d=&quot;M6 9l6 6l6 -6&quot; />
                                                             </svg>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Height</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Full</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Height</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Full</p>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Width</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Full</p>
+                                                    <div class=&quot; space-y-1&quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Width</label>
+                                                        <div class=&quot; flex gap-2&quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Full</p>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Margin Top</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Auto</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Top</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Margin Bottom</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Auto</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Bottom</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-non &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Margin Left</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Auto</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Left</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
                                                         </div>
                                                     </div>
-                                                    <div class=&quot;space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot;text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Margin Right</label>
-                                                        <div class=&quot;flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot;flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot;w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Auto</p>
+                                                    <div class=&quot; space-y-1 &quot;>
+                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Right</label>
+                                                        <div class=&quot; flex gap-2 &quot;>
+                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
                                                         </div>
                                                     </div>
                                                 </div>
