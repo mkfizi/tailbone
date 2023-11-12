@@ -443,16 +443,17 @@
             <div class="grid overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
                 
                 <!-- Canvas -->
-                <div class="border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700">
+                <div class="border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700"
+                    @click="deselect()"
+                >
 
-                    
                     <!-- Canvas board -->  
                     <template x-if="elements.length > 0" hidden>
                         <div class="mx-4 my-16 sm:mx-8"
                             x-data="{
 
                                 // Draw board
-                                drawBoard(elements) {
+                                drawCanvasBoard(elements) {
                                     template = '';
                                     elements.forEach((element) => {
                                         template += `
@@ -468,7 +469,7 @@
 
                                         // Draw board recursively if element contains child
                                         if (element.childs) {
-                                            template += this.drawBoard(element.childs);
+                                            template += this.drawCanvasBoard(element.childs);
                                         }
 
                                         template += `
@@ -479,7 +480,7 @@
                                     return template;
                                 }
                             }"
-                            x-html="drawBoard(elements)"
+                            x-html="drawCanvasBoard(elements)"
                         >
                         </div>
                     </template>
