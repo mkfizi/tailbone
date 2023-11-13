@@ -70,13 +70,6 @@
         breakpointSize: 1024,
         elements: null,
         isAnimationEnabled: true,
-        isModalOpen: false,
-        modalTitle: '',
-        modalText: '',
-        modalCreateElement: true,
-        modalTrigger: () => {
-            return;
-        },
         presets: {
             preset1: {
                 title: 'Preset 1',
@@ -957,6 +950,16 @@
                     targetElement.innerHTML = this.setup(elements);
                 }
             }
+        },
+
+        modal: {
+            isOpen: false,
+            title: '',
+            text: '',
+            createElemenet: true,
+            trigger() {
+                return;
+            }
         }
     }"
     x-init="
@@ -1206,14 +1209,14 @@
                 <!-- New canvas button -->
                 <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
                     @click="
-                        isModalOpen = true;
-                        modalTitle = 'Clear Canvas';
-                        modalText = 'This will remove all created elements. Do you want to proceed?';
-                        modalCreateElement = false;
-                        modalTrigger = () => {
+                        modal.isOpen = true;
+                        modal.title = 'Clear Canvas';
+                        modal.text = 'This will remove all created elements. Do you want to proceed?';
+                        modal.createElement = false;
+                        modal.trigger = () => {
                             elements = [];
                             options.draw();
-                            isModalOpen = false;
+                            modal.isOpen = false;
                         }
                     "
                 >Clear</button>
@@ -1285,7 +1288,19 @@
                     <div x-html="layers.setup()"></div>
                     
                     <div class="p-2">
-                        <button type="button" class="w-full px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">Create Element</button>
+                        <button type="button" class="w-full px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
+                        @click="
+                            modal.isOpen = true;
+                            modal.title = 'Create Element';
+                            modal.text = 'This will remove all created elements. Do you want to proceed?';
+                            modal.createElement = true;
+                            modal.trigger = () => {
+                                elements = [];
+                                options.draw();
+                                modal.isOpen = false;
+                            }
+                        "
+                        >Create Element</button>
                     </div>
                 </div>
                 
@@ -1323,19 +1338,26 @@
         <!-- Modal -->
         <div id="modal" class="fixed top-0 left-0 z-10 invisible hidden w-screen h-screen bg-neutral-500/50"
             :class="{ 
-                'hidden invisible': !isModalOpen 
+                'hidden invisible': !modal.isOpen 
             }"
-            :aria-hidden="isModalOpen ? false : true"
+            :aria-hidden="modal.isOpen ? false : true"
             x-init="
             
                 // Force focus on focus trap
-                $watch('isModalOpen', isModalOpen => { 
-                    if (isModalOpen) {
+                $watch('modal.isOpen', modalIsOpen => { 
+                    if (modalIsOpen) {
                         $el.setAttribute('tabindex', 1);
                         $el.focus();
                         setTimeout(() => {
                             $el.removeAttribute('tabindex');
                         }, 100);
+                    } else {
+                        modal.text = '';
+                        modal.title = '';
+                        modal.createElement = false;
+                        modal.trigger = () => { 
+                            return; 
+                        };      
                     }
                 })
             "
@@ -1343,7 +1365,7 @@
             
                 // Handle focus trap
                 (event) => {
-                    if (isModalOpen) {
+                    if (modal.isOpen) {
                         const focusableElements = Array.from($el.querySelectorAll(`a, button, input, textarea, select, details, [tabindex], [contenteditable='true']`)).filter(element => {
                             return !element.closest(`[tabindex='-1'], .hidden, .invisible`) || null;
                         });
@@ -1362,22 +1384,12 @@
             "
         >
             <div class="fixed p-8 transform -translate-x-1/2 -translate-y-1/2 bg-white border rounded-md shadow left-1/2 top-1/2 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 w-80 sm:w-96" aria-labelledby="modal"
-                x-show="isModalOpen"
-                x-init="
-                    $watch('isModalOpen', isModalOpen => {
-                        if (!isModalOpen) {
-                            modalText = '';
-                            modalTitle = '';
-                            modalCreateElement = false;
-                            modalTrigger = () => { return };                        
-                        }
-                    })
-                "
-                @click.outside="isModalOpen = false"
+                x-show="modal.isOpen"
+                @click.outside="modal.isOpen = false"
             >
                 <button type="button" class="absolute right-4 top-4 group" aria-controls="modal" aria-label="Close modal"
-                    :aria-expanded="isModalOpen ? true : false"
-                    @click="isModalOpen = false"
+                    :aria-expanded="modal.isOpen ? true : false"
+                    @click="modal.isOpen = false"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -1386,17 +1398,17 @@
                     </svg>
                 </button>
                 <div class="space-y-2 text-center">
-                    <p class="text-lg font-bold text-black sm:text-xl lg:text-2xl dark:text-white" x-text="modalTitle"></p>
-                    <p class="text-base text-neutral-700 dark:text-neutral-300" x-text="modalText"></p>
+                    <p class="text-lg font-bold text-black sm:text-xl lg:text-2xl dark:text-white" x-text="modal.title"></p>
+                    <p class="text-base text-neutral-700 dark:text-neutral-300" x-text="modal.text"></p>
                 </div>
-                <template x-if="!modalCreateElement">
+                <template x-if="!modal.createElement">
                     <div class="flex flex-wrap justify-center gap-2 mt-8">
                         <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
-                            @click="modalTrigger"
+                            @click="modal.trigger"
                         >Yes</button>
                         <button type="button" class="px-4 py-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="modal" aria-label="Close modal"
-                            :aria-expanded="isModalOpen ? true : false"
-                            @click="isModalOpen = false"
+                            :aria-expanded="modal.isOpen ? true : false"
+                            @click="modal.isOpen = false"
                         >No</button>
                     </div>
                 </template>
