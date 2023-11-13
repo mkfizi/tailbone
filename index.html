@@ -70,6 +70,13 @@
         breakpointSize: 1024,
         elements: null,
         isAnimationEnabled: true,
+        isModalOpen: false,
+        modalTitle: '',
+        modalText: '',
+        modalCreateElement: true,
+        modalTrigger: () => {
+            return;
+        },
         presets: {
             preset1: {
                 title: 'Preset 1',
@@ -432,7 +439,6 @@
                 });
             },
 
-
             // Add classes
             addClassToElement(type, classes) {
                 return [
@@ -530,7 +536,7 @@
                             }&quot;
                             :class=&quot; isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
                         >
-                            <button type=&quot;button&quot; class=&quot; py-2 px-4 w-full text-left  text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white &quot;
+                            <button type=&quot;button&quot; class=&quot; py-2 px-4 w-full text-left overflow-hidden text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white &quot;
                                 @click=&quot;
                                     utilities.selectCurrentElement('${element.id}');
                                     options.draw();
@@ -552,6 +558,13 @@
                     }
                                     
                     html += `
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Duplicate element&quot;>
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z&quot; />
+                                        <path d=&quot;M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2&quot; />
+                                      </svg>
+                                </button>
                                 <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;>
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
@@ -1191,7 +1204,19 @@
             <div class="flex justify-between gap-4 mb-4">
 
                 <!-- New canvas button -->
-                <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Create new">Create New</button>
+                <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
+                    @click="
+                        isModalOpen = true;
+                        modalTitle = 'Clear Canvas';
+                        modalText = 'This will remove all created elements. Do you want to proceed?';
+                        modalCreateElement = false;
+                        modalTrigger = () => {
+                            elements = [];
+                            options.draw();
+                            isModalOpen = false;
+                        }
+                    "
+                >Clear</button>
                 
                 <div class="relative inline-block"
                     x-data="{ 
@@ -1201,7 +1226,7 @@
                     @keydown.escape.window="isOpen = false"
                 >
                     <!-- Canvas presets dropdown -->
-                    <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="dropdown" aria-label="Toggle dropdown"
+                    <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="presetsDropdown"
                         :aria-expanded="isOpen ? true : false"
                         @click="isOpen = !isOpen"
                     >
@@ -1211,7 +1236,7 @@
                             <path d="M6 9l6 6l6 -6" />
                         </svg>
                     </button>
-                    <ul id="dropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
+                    <ul id="presetsDropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
                         :class="{ 
                             'hidden invisible': !isOpen 
                         }"
@@ -1294,6 +1319,90 @@
                 </div>
             </div>
         </section>
+
+        <!-- Modal -->
+        <div id="modal" class="fixed top-0 left-0 z-10 invisible hidden w-screen h-screen bg-neutral-500/50"
+            :class="{ 
+                'hidden invisible': !isModalOpen 
+            }"
+            :aria-hidden="isModalOpen ? false : true"
+            x-init="
+            
+                // Force focus on focus trap
+                $watch('isModalOpen', isModalOpen => { 
+                    if (isModalOpen) {
+                        $el.setAttribute('tabindex', 1);
+                        $el.focus();
+                        setTimeout(() => {
+                            $el.removeAttribute('tabindex');
+                        }, 100);
+                    }
+                })
+            "
+            @keydown.tab.window="
+            
+                // Handle focus trap
+                (event) => {
+                    if (isModalOpen) {
+                        const focusableElements = Array.from($el.querySelectorAll(`a, button, input, textarea, select, details, [tabindex], [contenteditable='true']`)).filter(element => {
+                            return !element.closest(`[tabindex='-1'], .hidden, .invisible`) || null;
+                        });
+                        const firstElement = focusableElements[0];
+                        const lastElement = focusableElements[focusableElements.length - 1];
+            
+                        if (event.shiftKey && (document.activeElement === firstElement || document.activeElement === document.body)) {
+                            event.preventDefault();
+                            lastElement.focus();
+                        } else if (!event.shiftKey && document.activeElement === lastElement) {
+                            event.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                }
+            "
+        >
+            <div class="fixed p-8 transform -translate-x-1/2 -translate-y-1/2 bg-white border rounded-md shadow left-1/2 top-1/2 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 w-80 sm:w-96" aria-labelledby="modal"
+                x-show="isModalOpen"
+                x-init="
+                    $watch('isModalOpen', isModalOpen => {
+                        if (!isModalOpen) {
+                            modalText = '';
+                            modalTitle = '';
+                            modalCreateElement = false;
+                            modalTrigger = () => { return };                        
+                        }
+                    })
+                "
+                @click.outside="isModalOpen = false"
+            >
+                <button type="button" class="absolute right-4 top-4 group" aria-controls="modal" aria-label="Close modal"
+                    :aria-expanded="isModalOpen ? true : false"
+                    @click="isModalOpen = false"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M18 6l-12 12" />
+                        <path d="M6 6l12 12" />
+                    </svg>
+                </button>
+                <div class="space-y-2 text-center">
+                    <p class="text-lg font-bold text-black sm:text-xl lg:text-2xl dark:text-white" x-text="modalTitle"></p>
+                    <p class="text-base text-neutral-700 dark:text-neutral-300" x-text="modalText"></p>
+                </div>
+                <template x-if="!modalCreateElement">
+                    <div class="flex flex-wrap justify-center gap-2 mt-8">
+                        <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
+                            @click="modalTrigger"
+                        >Yes</button>
+                        <button type="button" class="px-4 py-2 text-base font-semibold text-black bg-transparent border border-black rounded-md dark:text-white hover:border-neutral-700 hover:text-white hover:bg-neutral-700 dark:bg-transparent dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="modal" aria-label="Close modal"
+                            :aria-expanded="isModalOpen ? true : false"
+                            @click="isModalOpen = false"
+                        >No</button>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
     </main>
     
     <!-- Footer -->
