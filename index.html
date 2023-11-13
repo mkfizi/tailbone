@@ -79,13 +79,13 @@
                         isSelected: false,
                         classes: {
                             display: 'flex',
-                            direction: 'flex-row',
+                            flexDirection: 'flex-row',
                             gap: 'gap-2'
                         },
                         childs: [
                             {
                                 type: 'skeleton',
-                                isSelected: true,
+                                isSelected: false,
                                 classes: {
                                     height: 'h-12',
                                     width: 'w-12',
@@ -97,7 +97,7 @@
                                 isSelected: false,
                                 classes: {
                                         display: 'flex',
-                                        direction: 'flex-col',
+                                        flexDirection: 'flex-col',
                                         gap: 'gap-1'
                                 },
                                 childs: [
@@ -129,88 +129,428 @@
                         isSelected: false,
                         classes: {
                             display: 'flex',
-                            direction: 'flex-row',
+                            flexDirection: 'flex-row',
                             gap: 'gap-4'
                         },
                     }
                 ]
             }
         },
-
-        // Add classes
-        addClass(type, classes) {
-            return [
-                Object.values(classes).join(' '),
-                type === 'skeleton' && this.isAnimationEnabled ? 'animate-pulse' : '',
-                type === 'skeleton' ? 'bg-neutral-300 dark:bg-neutral-700' : ''
-            ].join(' ').trim()
+        properties: {
+            flexDirection: {
+                row: 'flex-row',
+                column: 'flex-col'
+            },
+            gap: {
+                0: 'gap-0',
+                1: 'gap-1',
+                2: 'gap-2',
+                3: 'gap-3',
+                4: 'gap-4',
+                5: 'gap-5',
+                6: 'gap-6',
+                7: 'gap-7',
+                8: 'gap-8',
+                9: 'gap-9',
+                10: 'gap-10',
+                11: 'gap-11',
+                12: 'gap-12',
+                14: 'gap-14',
+                16: 'gap-16',
+                20: 'gap-20',
+                24: 'gap-24',
+                28: 'gap-28',
+                32: 'gap-32',
+                36: 'gap-36',
+                40: 'gap-40',
+                44: 'gap-44',
+                48: 'gap-48',
+                52: 'gap-52',
+                56: 'gap-56',
+                60: 'gap-60',
+                64: 'gap-64',
+                72: 'gap-72',
+                80: 'gap-80',
+                96: 'gap-96',
+            },
         },
 
-        // Select element
-        select(id, elements = this.elements) {
-            elements.forEach((element) => {
-                if (element.id == id) {
-                    element.isSelected = true;
-                } else {
+        utilities: {
+
+            // Assign ids on element
+            assignUniqueIds(elements, parentId = '') {
+                elements.forEach((element, index) => {
+                    const uniqueId = parentId + '_' + index; // Creating a unique ID
+            
+                    // Assigning the unique ID to the current element
+                    element.id = uniqueId;
+            
+                    if (element.childs && element.childs.length > 0) {
+                        // Recursively assign IDs to child elements
+                        this.assignUniqueIds(element.childs, uniqueId);
+                    }
+                });
+            },
+
+
+            // Add classes
+            addClassToElement(type, classes) {
+                return [
+                    Object.values(classes).join(' '),
+                    type === 'skeleton' && this.isAnimationEnabled ? 'animate-pulse' : '',
+                    type === 'skeleton' ? 'bg-neutral-300 dark:bg-neutral-700' : ''
+                ].join(' ').trim()
+            },
+
+            // Select current element
+            selectCurrentElement(id, elements = $data.elements) {
+                elements.forEach((element) => {
+                    if (element.id == id) {
+                        element.isSelected = true;
+                    } else {
+                        element.isSelected = false;
+                    }
+
+                    if (element.childs) {
+                        this.selectCurrentElement(id, element.childs);
+                    }
+                })
+            },
+
+            // Deselect current element
+            deselectElement(elements = $data.elements) {
+                elements.forEach((element) => {
                     element.isSelected = false;
-                }
 
-                if (element.childs) {
-                    this.select(id, element.childs);
-                }
-            })
+                    if (element.childs) {
+                        this.deselectElement(element.childs);
+                    }
+                })
+            },
+
+            // Update element class properties
+            updateProperties(id, property, value, elements = $data.elements) {
+                elements.forEach((element) => {
+                    if (element.id == id) {
+                        element.classes[property] = value;
+                    }
+                    if (element.childs) {
+                        this.updateProperties(id, property, value, element.childs);
+                    }
+                })
+            },
         },
 
-        // Deselect element
-        deselect(elements = this.elements) {
-            elements.forEach((element) => {
-                element.isSelected = false;
 
-                if (element.childs) {
-                    this.deselect(element.childs);
-                }
-            })
-        },
+        output: {
 
-        assignUniqueIds(elements, parentId = '') {
-            elements.forEach((element, index) => {
-                const uniqueId = parentId + '_' + index; // Creating a unique ID
-        
-                // Assigning the unique ID to the current element
-                element.id = uniqueId;
-        
-                if (element.childs && element.childs.length > 0) {
-                    // Recursively assign IDs to child elements
-                    this.assignUniqueIds(element.childs, uniqueId);
-                }
-            });
-        },
+            // Setup content for output
+            setup(elements = $data.elements) {
+                html = '';
+                elements.forEach((element) => {
+                    html += `
+                        <div class=&quot; ${$data.utilities.addClassToElement(element.type, element.classes)}&quot;
+                            x-data=&quot;{
+                                isSelected: ${element.isSelected}
+                            }&quot;
+                            :class=&quot; { 
+                                'outline outline-1 outline-black dark:outline-white': isSelected
+                            }&quot;
+                            @click.stop=&quot;
+                                utilities.selectCurrentElement('${element.id}')
+                                options.draw();
+                            &quot;
+                        >
+                    `
 
-        // Initialize local storage
-        initializeLocalStorage() {
-            this.elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
-            this.isAnimationEnabled = localStorage.isAnimationEnabled;
-    
-            if (this.elements == null) {
-                this.element = this.presets.preset1.elements;
-                this.assignUniqueIds(this.element);
-                localStorage.elements = JSON.stringify(this.element);
-                this.elements = JSON.parse(localStorage.elements);
+                    // Draw board recursively if element contains child
+                    if (element.childs) {
+                        html += this.setup(element.childs);
+                    }
+
+                    html += `
+                        </div>
+                    `;
+                })
+
+                return html;
             }
-    
-            if(this.isAnimationEnabled == null) {
-                localStorage.isAnimationEnabled = true;
-                this.isAnimationEnabled = localStorage.isAnimationEnabled;
+        },
+
+        layers: {
+
+            // Setup content for layers
+            setup(elements = $data.elements) {
+                html = '';
+                elements.forEach((element, key) => {
+                    html += `
+                        <div class=&quot; relative border group &quot;
+                            x-data=&quot;{
+                                isSelected: ${element.isSelected}
+                            }&quot;
+                            :class=&quot; isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
+                        >
+                            <button type=&quot;button&quot; class=&quot; py-2 px-4 w-full text-left  text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white &quot;
+                                @click=&quot;
+                                    utilities.selectCurrentElement('${element.id}');
+                                    options.draw();
+                                &quot;
+                            >${element.type.charAt(0).toUpperCase() + element.type.slice(1)}</button>
+                            <div class=&quot; top-0 z-10 absolute right-4 py-2 flex &quot;>
+                    `;
+
+                    if (element.type === 'container') {
+                        html +=`
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Create child element&quot;>
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M12 5l0 14&quot; />
+                                        <path d=&quot;M5 12l14 0&quot; />
+                                    </svg>
+                                </button>
+                        `;
+                    }
+                                    
+                    html += `
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;>
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M18 6l-12 12&quot; />
+                                        <path d=&quot;M6 6l12 12&quot; />
+                                    </svg>
+                                </button>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element up&quot;>
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M12 5l0 14&quot; />
+                                        <path d=&quot;M18 11l-6 -6&quot; />
+                                        <path d=&quot;M6 11l6 -6&quot; />
+                                    </svg>
+                                </button>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element down&quot;>
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M12 5l0 14&quot; />
+                                        <path d=&quot;M18 13l-6 6&quot; />
+                                        <path d=&quot;M6 13l6 6&quot; />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    
+                    // Draw elements sidebar recursively if element contains child
+                    if (element.childs) {
+                        html += `
+                            <div class=&quot; ml-4 relative &quot;>
+                                <div class=&quot; h-full w-px absolute bg-neutral-300 dark:bg-neutral-700 &quot;></div>
+                        `;
+                        html += this.setup(element.childs);
+                        html += `
+                            </div>
+                        `;
+                    }
+                });
+
+                return html;
             }
+        },
+
+        options: {
+
+            // Setup content for options
+            setup(elements = $data.elements) {
+                html = '';
+                elements.forEach((element) => {
+                    if (element.isSelected) {
+                        html += `
+                            <div class=&quot; flex justify-between mb-4 &quot;
+                                x-init=&quot;showProperties = true&quot;
+                            >
+                                <p class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Properties</p>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Deselect element&quot;
+                                    @click=&quot;
+                                        utilities.deselectElement();
+                                        options.draw();
+                                    &quot;
+                                >
+                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; w-6 h-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                        <path d=&quot;M18 6l-12 12&quot; />
+                                        <path d=&quot;M6 6l12 12&quot; />
+                                    </svg>
+                                </button>
+                            </div>
+                            `;
+                            
+                        if (element.type == 'container') {
+                            html += `
+                                <div class=&quot; space-y-2 &quot;>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;direction&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Direction</label>
+                                        <div class=&quot; relative w-full &quot;>
+                                            <select id=&quot;direction&quot; name=&quot;direction&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;
+                                            @change=&quot;utilities.updateProperties('${element.id}', 'flexDirection', $el.value)&quot;>
+                            `;
+                            
+                            Object.entries($data.properties.flexDirection).forEach(([key, value], index) => {
+                                html += `<option value=&quot;${value}&quot; class=&quot; dark:bg-transparent &quot; ${value == element.classes.flexDirection ? 'selected' : ''}>${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
+                            });
     
-            if(localStorage.version == null) {
-                localStorage.version = this.version;
-                this.version = localStorage.version;
+                            html += `
+                                            </select>
+                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;gap&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Gap</label>
+    
+                            `;
+                            
+                            inputValue = 0;
+                            inputKey = 0;
+                            Object.entries($data.properties.gap).forEach(([key, value], index) => {
+                                if (element.classes.gap == value) {
+                                    inputValue = index;
+                                    inputKey = key;
+                                }
+                            });
+    
+                            html += `
+                                        <div class=&quot; flex gap-2 &quot;
+                                            x-data=&quot;{
+                                                sliderValue: ${inputKey},
+                                                updateSlider(inputValue) {
+                                                    updateValue = '';
+                                                    Object.entries(properties.gap).forEach(([key, value], index) => {
+                                                        if (inputValue == index) {
+                                                            this.sliderValue = key;
+                                                            updateValue = value;
+                                                        }
+                                                    });
+                                                    utilities.updateProperties('${element.id}', 'gap', updateValue)
+                                                }
+                                            }&quot;
+                                        >
+                                            <input id=&quot;gap&quot; type=&quot;range&quot; name=&quot;gap&quot; min=&quot;0&quot; 
+                                                :max=&quot;Object.keys(properties.gap).length - 1&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                                @input=&quot;updateSlider($el.value)&quot;
+                                            >
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderValue&quot;></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (element.type == 'skeleton') {
+    
+                            html += `
+                                <div class=&quot; space-y-2 &quot;>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Rounded</label>
+                                        <div class=&quot; relative w-full &quot;>
+                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer&quot;>
+                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Small</option>
+                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Medium</option>
+                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Large</option>
+                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Full</option>
+                                            </select>
+                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Height</label>
+                                        <div class=&quot; flex gap-2 &quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Full</p>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1&quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Width</label>
+                                        <div class=&quot; flex gap-2&quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Full</p>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Top</label>
+                                        <div class=&quot; flex gap-2 &quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Bottom</label>
+                                        <div class=&quot; flex gap-2 &quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-non &quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Left</label>
+                                        <div class=&quot; flex gap-2 &quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
+                                        </div>
+                                    </div>
+                                    <div class=&quot; space-y-1 &quot;>
+                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Right</label>
+                                        <div class=&quot; flex gap-2 &quot;>
+                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
+                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `
+                        }
+                    }
+    
+                    // Draw elements sidebar recursively if element contains child
+                    if (element.childs) {
+                        html += this.setup(element.childs);
+                    }
+                });
+                return html;
+            },
+
+            // Draw properties content;
+            draw(elements = $data.elements) {
+                targetElement = document.getElementById('properties');
+                if (targetElement) {
+                    targetElement.innerHTML = '';
+                    targetElement.innerHTML = this.setup(elements);
+                }
             }
         }
     }"
     x-init="
-        initializeLocalStorage();
+
+        // Initialize local storage values
+        elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
+        isAnimationEnabled = localStorage.isAnimationEnabled;
+
+        if (elements == null) {
+            element = presets.preset1.elements;
+            utilities.assignUniqueIds(element);
+            localStorage.elements = JSON.stringify(element);
+            elements = JSON.parse(localStorage.elements);
+        }
+
+        if(isAnimationEnabled == null) {
+            localStorage.isAnimationEnabled = true;
+            this.isAnimationEnabled = localStorage.isAnimationEnabled;
+        }
+
+        if(localStorage.version == null) {
+            localStorage.version = version;
+            version = localStorage.version;
+        }
 
         $watch('elements', (elements) => {
             localStorage.elements = JSON.stringify(elements);
@@ -475,46 +815,18 @@
 
             <div class="grid overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
                 
-                <!-- Canvas -->
+                <!-- Output background -->
                 <div class="border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700"
-                    @click="deselect()"
+                    @click="
+                        utilities.deselectElement();
+                        options.draw();
+                    "
                 >
 
-                    <!-- Canvas board -->  
+                    <!-- Output -->  
                     <template x-if="elements.length > 0" hidden>
                         <div class="mx-4 my-16 sm:mx-8"
-                            x-data="{
-
-                                // Draw board
-                                drawCanvasBoard(elements) {
-                                    template = '';
-                                    elements.forEach((element) => {
-                                        template += `
-                                            <div id=&quot;${element.id}&quot; class=&quot; ${addClass(element.type, element.classes)}&quot;
-                                                x-data=&quot;{
-                                                    isSelected: ${element.isSelected}
-                                                }&quot;
-                                                :class=&quot; { 
-                                                    'outline outline-1 outline-black dark:outline-white': isSelected
-                                                }&quot;
-                                                @click.stop=&quot;select($el.id)&quot;
-                                            >
-                                        `
-
-                                        // Draw board recursively if element contains child
-                                        if (element.childs) {
-                                            template += this.drawCanvasBoard(element.childs);
-                                        }
-
-                                        template += `
-                                            </div>
-                                        `;
-                                    })
-
-                                    return template;
-                                }
-                            }"
-                            x-html="drawCanvasBoard(elements)"
+                            x-html="output.setup()"
                         >
                         </div>
                     </template>
@@ -525,88 +837,10 @@
                     </template>
                 </div>
                 
-                <!-- Elements -->
+                <!-- Layers -->
                 <div class="bg-white border-b divide-y lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700 divide-neutral-300 dark:divide-neutral-700">
-                    <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Elements</p>
-                    <div 
-                        x-data="{
-
-                            // Draw elements sidebar
-                            drawElementsSidebar(elements) {
-                                template = '';
-                                elements.forEach((element, key) => {
-                                    template += `
-                                        <div class=&quot; relative border group &quot;
-                                            x-data=&quot;{
-                                                isSelected: ${element.isSelected}
-                                            }&quot;
-                                            :class=&quot; isSelected ? 'border-black dark:border-white' : 'border-transparent dark:border-transparent hover:border-black dark:hover:border-white'&quot;
-                                        >
-                                            <button type=&quot;button&quot; class=&quot; py-2 px-4 w-full text-left capitalize text-base text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white &quot; data-target=&quot;${element.id}&quot;
-                                                @click=&quot;select($el.dataset.target)&quot;
-                                            >${element.type}</button>
-                                            <div class=&quot; top-0 z-10 absolute right-4 py-2 flex &quot;>
-                                    `;
-
-                                    if (element.type === 'container') {
-                                        template +=`
-                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Create child element&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                        <path d=&quot;M12 5l0 14&quot; />
-                                                        <path d=&quot;M5 12l14 0&quot; />
-                                                    </svg>
-                                                </button>
-                                        `;
-                                    }
-                                                    
-                                    template += `
-                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                        <path d=&quot;M18 6l-12 12&quot; />
-                                                        <path d=&quot;M6 6l12 12&quot; />
-                                                    </svg>
-                                                </button>
-                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element up&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                        <path d=&quot;M12 5l0 14&quot; />
-                                                        <path d=&quot;M18 11l-6 -6&quot; />
-                                                        <path d=&quot;M6 11l6 -6&quot; />
-                                                    </svg>
-                                                </button>
-                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element down&quot;>
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                        <path d=&quot;M12 5l0 14&quot; />
-                                                        <path d=&quot;M18 13l-6 6&quot; />
-                                                        <path d=&quot;M6 13l6 6&quot; />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    `;
-
-                                    
-                                    // Draw elements sidebar recursively if element contains child
-                                    if (element.childs) {
-                                        template += `
-                                            <div class=&quot; ml-4 relative &quot;>
-                                                <div class=&quot; h-full w-px absolute bg-neutral-300 dark:bg-neutral-700 &quot;></div>
-                                        `;
-                                        template += this.drawElementsSidebar(element.childs);
-                                        template += `
-                                            </div>
-                                        `;
-                                    }
-                                });
-
-                                console.log(template)
-                                return template;
-                            }
-                        }"
-                        x-html="drawElementsSidebar(elements)"></div>
+                    <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Layers</p>
+                    <div x-html="layers.setup()"></div>
                     
                     <div class="p-2">
                         <button type="button" class="w-full px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none">Create Element</button>
@@ -614,10 +848,10 @@
                 </div>
                 
                 
-                <!-- Configurations -->
+                <!-- Options -->
                 <div class="bg-white divide-y lg:order-3 dark:bg-neutral-800 divide-neutral-300 dark:divide-neutral-700">
                     <div class="p-4">
-                        <p class="mb-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Configurations</p>
+                        <p class="mb-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Options</p>
                         <div class="flex items-center gap-2">
                             <input id="animation" type="checkbox" name="checkbox" class="accent-neutral-700 dark:accent-neutral-300 disabled:opacity-50 disabled:pointer-events-none" 
                                 :checked="isAnimationEnabled"
@@ -635,153 +869,12 @@
                     </div>  
 
                     <div class="p-4"
+                        id="properties"
+                        x-show="showProperties"
                         x-data="{
-                            // Draw configuration sidebar
-                            drawConfigurationsSidebar(elements) {
-                                template = '';
-                                elements.forEach((element) => {
-                                    if (element.isSelected) {
-                                        template += `
-                                            <div class=&quot; flex justify-end mb-4 &quot;>
-                                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Deselect element&quot;
-                                                    
-                                                    @click=&quot;deselect()&quot;
-                                                >
-                                                    <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; w-6 h-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                        <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                        <path d=&quot;M18 6l-12 12&quot; />
-                                                        <path d=&quot;M6 6l12 12&quot; />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        `;
-                                        if (element.type == 'container') {
-                                            template += `
-                                                <div class=&quot; space-y-2 &quot;>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Direction</label>
-                                                        <div class=&quot; relative w-full &quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;>
-                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Row</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
-                                                            </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Justify</label>
-                                                        <div class=&quot; relative w-full &quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none pee r&quot;>
-                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Normal</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
-                                                            </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Align</label>
-                                                        <div class=&quot; relative w-full &quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;>
-                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Normal</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Column</option>
-                                                            </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Gap</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>100%</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        } else if (element.type == 'skeleton') {
-
-                                            template += `
-                                                <div class=&quot; space-y-2 &quot;>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Rounded</label>
-                                                        <div class=&quot; relative w-full &quot;>
-                                                            <select id=&quot;select&quot; name=&quot;select&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer&quot;>
-                                                                <option value=&quot;&quot; class=&quot; dark:bg-transparent &quot;>Small</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Medium</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Large</option>
-                                                                <option value=&quot;Option 1&quot; class=&quot; dark:bg-transparent &quot;>Full</option>
-                                                            </select>
-                                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Height</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Full</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1&quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300&quot;>Width</label>
-                                                        <div class=&quot; flex gap-2&quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none&quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0&quot;>Full</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Top</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Bottom</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-non &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Left</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class=&quot; space-y-1 &quot;>
-                                                        <label for=&quot;&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Right</label>
-                                                        <div class=&quot; flex gap-2 &quot;>
-                                                            <input id=&quot;range&quot; type=&quot;range&quot; name=&quot;range&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;50&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;>
-                                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot;>Auto</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `
-                                        }
-                                    }
-
-                                    // Draw elements sidebar recursively if element contains child
-                                    if (element.childs) {
-                                        template += this.drawConfigurationsSidebar(element.childs);
-                                    }
-                                });
-                                return template;
-                            }
+                            showProperties: false,
                         }"
-                        x-html="drawConfigurationsSidebar(elements)"
-                    ></div>
+                        x-init="options.draw()"></div>
                 </div>
             </div>
         </section>
