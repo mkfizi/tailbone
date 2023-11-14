@@ -97,6 +97,7 @@
                                 classes: {
                                     flexDirection: 'flex-col',
                                     gap: 'gap-1'
+                                    marginTop: 'mt-2'
                                 },
                                 childs: [
                                     {
@@ -106,7 +107,6 @@
                                             height: 'h-4',
                                             width: 'w-24',
                                             rounded: 'rounded-md',
-                                            marginTop: 'mt-2'
                                         }
                                     },
                                     {
@@ -477,14 +477,14 @@
 
                 $data.utilities.deselectElement();
                 if (parentId == null) {
-                    $data.elements = [
-                        newElement
-                    ]
+                    $data.elements.push(newElement);
                 } else {
                     element = $data.utilities.findElementById(parentId);
 
                     if (element != null) {
-                        console.log(element)
+                        if (!element.childs) {
+                            element.childs = [];
+                        }
                         element.childs.push(newElement);
                     }
                 }
@@ -687,16 +687,16 @@
                                     </svg>
                                 </button>
                             </div>
+                            <div class=&quot; space-y-2 &quot;>
                             `;
                             
                         if (element.type == 'container') {
                             html += `
-                                <div class=&quot; space-y-2 &quot;>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;direction&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Direction</label>
-                                        <div class=&quot; relative w-full &quot;>
-                                            <select id=&quot;direction&quot; name=&quot;direction&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;
-                                                @change=&quot;utilities.updateProperties('${element.id}', 'flexDirection', $el.value)&quot;>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;direction&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Direction</label>
+                                    <div class=&quot; relative w-full &quot;>
+                                        <select id=&quot;direction&quot; name=&quot;direction&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;
+                                            @change=&quot;utilities.updateProperties('${element.id}', 'flexDirection', $el.value)&quot;>
                             `;
                             
                             Object.entries($data.properties.flexDirection).forEach(([key, value], index) => {
@@ -704,16 +704,16 @@
                             });
     
                             html += `
-                                            </select>
-                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                            </svg>
-                                        </div>
+                                        </select>
+                                        <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                            <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                            <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                        </svg>
                                     </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;gap&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Gap</label>
-                                    `;
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;gap&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Gap</label>
+                            `;
                                     
                             sliderText = '0px';
                             inputValue = 0;
@@ -725,39 +725,37 @@
                             });
                                     
                             html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.gap).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'gap', updateValue)
-                                                }
-                                            }&quot;
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.gap).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'gap', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;gap&quot; type=&quot;range&quot; name=&quot;gap&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.gap).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
                                         >
-                                            <input id=&quot;gap&quot; type=&quot;range&quot; name=&quot;gap&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.gap).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
                                     </div>
                                 </div>
                             `;
 
                         } else if (element.type == 'skeleton') {
                             html += `
-                                <div class=&quot; space-y-2 &quot;>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;rounded&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Rounded</label>
-                                        <div class=&quot; relative w-full &quot;>
-                                            <select id=&quot;rounded&quot; name=&quot;rounded&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;
-                                                @change=&quot;utilities.updateProperties('${element.id}', 'rounded', $el.value)&quot;>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;rounded&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Rounded</label>
+                                    <div class=&quot; relative w-full &quot;>
+                                        <select id=&quot;rounded&quot; name=&quot;rounded&quot; class=&quot; relative w-full py-2 pl-2 pr-12 text-base bg-transparent border rounded-md appearance-none text-neutral-700 dark:text-neutral-300 border-neutral-600 dark:border-neutral-400 disabled:opacity-50 disabled:pointer-events-none peer &quot;
+                                            @change=&quot;utilities.updateProperties('${element.id}', 'rounded', $el.value)&quot;>
                             `;
                             
                             Object.entries($data.properties.rounded).forEach(([key, value], index) => {
@@ -765,232 +763,235 @@
                             });
     
                             html += `
-                                            </select>
-                                            <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
-                                                <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
-                                                <path d=&quot;M6 9l6 6l6 -6&quot; />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;height&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Height</label>
-                            `;
-                            
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.height).forEach(([key, value], index) => {
-                                if (element.classes.height == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.height).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'height', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;height&quot; type=&quot;range&quot; name=&quot;height&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.height).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;width&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Width</label>
-                                    `;
-                                    
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.width).forEach(([key, value], index) => {
-                                if (element.classes.width == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-                                    
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.width).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'width', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;width&quot; type=&quot;range&quot; name=&quot;width&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.width).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;marginTop&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Top</label>
-                                    `;
-                                    
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.marginTop).forEach(([key, value], index) => {
-                                if (element.classes.marginTop == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-                                    
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.marginTop).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'marginTop', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;marginTop&quot; type=&quot;range&quot; name=&quot;marginTop&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.marginTop).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;marginBottom&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Bottom</label>
-                                    `;
-                                    
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.marginBottom).forEach(([key, value], index) => {
-                                if (element.classes.marginBottom == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-                                    
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.marginBottom).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'marginBottom', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;marginBottom&quot; type=&quot;range&quot; name=&quot;marginBottom&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.marginBottom).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;marginLeft&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Left</label>
-                                    `;
-                                    
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.marginLeft).forEach(([key, value], index) => {
-                                if (element.classes.marginLeft == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-                                    
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.marginLeft).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'marginLeft', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;marginLeft&quot; type=&quot;range&quot; name=&quot;marginLeft&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.marginLeft).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
-                                    </div>
-                                    <div class=&quot; space-y-1 &quot;>
-                                        <label for=&quot;marginRight&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Right</label>
-                                    `;
-                                    
-                            sliderText = '0px';
-                            inputValue = 0;
-                            Object.entries($data.properties.marginRight).forEach(([key, value], index) => {
-                                if (element.classes.marginRight == value) {
-                                    sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                    inputValue = index;
-                                }
-                            });
-                                    
-                            html += `
-                                        <div class=&quot; flex gap-2 &quot;
-                                            x-data=&quot;{
-                                                sliderText: '${sliderText}',
-                                                updateSlider(inputValue) {
-                                                    updateValue = '';
-                                                    Object.entries($data.properties.marginRight).forEach(([key, value], index) => {
-                                                        if (inputValue == index) {
-                                                            this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
-                                                            updateValue = value;
-                                                        }
-                                                    });
-                                                    utilities.updateProperties('${element.id}', 'marginRight', updateValue)
-                                                }
-                                            }&quot;
-                                        >
-                                            <input id=&quot;marginRight&quot; type=&quot;range&quot; name=&quot;marginRight&quot; min=&quot;0&quot;
-                                                max=&quot;${Object.keys($data.properties.marginRight).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
-                                                @input=&quot;updateSlider($el.value)&quot;
-                                            >
-                                            <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
-                                        </div>
+                                        </select>
+                                        <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; absolute w-6 h-6 top-2 right-2 stroke-neutral-700 dark:stroke-neutral-300 peer-disabled:opacity-50 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
+                                            <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
+                                            <path d=&quot;M6 9l6 6l6 -6&quot; />
+                                        </svg>
                                     </div>
                                 </div>
-                            `
+                            `;
                         }
+                        
+                        html += `
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;height&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Height</label>
+                        `;
+                        
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.height).forEach(([key, value], index) => {
+                            if (element.classes.height == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.height).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'height', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;height&quot; type=&quot;range&quot; name=&quot;height&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.height).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;width&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Width</label>
+                                `;
+                                
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.width).forEach(([key, value], index) => {
+                            if (element.classes.width == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+                                
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.width).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'width', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;width&quot; type=&quot;range&quot; name=&quot;width&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.width).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;marginTop&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Top</label>
+                                `;
+                                
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.marginTop).forEach(([key, value], index) => {
+                            if (element.classes.marginTop == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+                                
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.marginTop).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'marginTop', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;marginTop&quot; type=&quot;range&quot; name=&quot;marginTop&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.marginTop).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;marginBottom&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Bottom</label>
+                                `;
+                                
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.marginBottom).forEach(([key, value], index) => {
+                            if (element.classes.marginBottom == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+                                
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.marginBottom).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'marginBottom', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;marginBottom&quot; type=&quot;range&quot; name=&quot;marginBottom&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.marginBottom).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;marginLeft&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Left</label>
+                                `;
+                                
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.marginLeft).forEach(([key, value], index) => {
+                            if (element.classes.marginLeft == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+                                
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.marginLeft).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'marginLeft', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;marginLeft&quot; type=&quot;range&quot; name=&quot;marginLeft&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.marginLeft).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                                <div class=&quot; space-y-1 &quot;>
+                                    <label for=&quot;marginRight&quot; class=&quot; text-base font-bold text-neutral-700 dark:text-neutral-300 &quot;>Margin Right</label>
+                                `;
+                                
+                        sliderText = '0px';
+                        inputValue = 0;
+                        Object.entries($data.properties.marginRight).forEach(([key, value], index) => {
+                            if (element.classes.marginRight == value) {
+                                sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                inputValue = index;
+                            }
+                        });
+                                
+                        html += `
+                                    <div class=&quot; flex gap-2 &quot;
+                                        x-data=&quot;{
+                                            sliderText: '${sliderText}',
+                                            updateSlider(inputValue) {
+                                                updateValue = '';
+                                                Object.entries($data.properties.marginRight).forEach(([key, value], index) => {
+                                                    if (inputValue == index) {
+                                                        this.sliderText = key.charAt(0).toUpperCase() + key.slice(1);
+                                                        updateValue = value;
+                                                    }
+                                                });
+                                                utilities.updateProperties('${element.id}', 'marginRight', updateValue)
+                                            }
+                                        }&quot;
+                                    >
+                                        <input id=&quot;marginRight&quot; type=&quot;range&quot; name=&quot;marginRight&quot; min=&quot;0&quot;
+                                            max=&quot;${Object.keys($data.properties.marginRight).length - 1}&quot; value=&quot;${inputValue}&quot; class=&quot; flex-1 disabled:opacity-50 disabled:pointer-events-none &quot;
+                                            @input=&quot;updateSlider($el.value)&quot;
+                                        >
+                                        <p class=&quot; w-12 text-base text-neutral-700 dark:text-neutral-300 shrink-0 &quot; x-text=&quot;sliderText&quot;></p>
+                                    </div>
+                                </div>
+                            </div>
+                        `
                     }
     
                     // Draw elements sidebar recursively if element contains child
