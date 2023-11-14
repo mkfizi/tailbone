@@ -418,7 +418,7 @@
         utilities: {
 
             // Assign ids on element
-            assignUniqueIds(elements, parentId = '') {
+            assignUniqueIds(elements = $data.elements, parentId = '') {
                 elements.forEach((element, index) => {
                     const uniqueId = parentId + '_' + index; // Creating a unique ID
             
@@ -956,9 +956,51 @@
             isOpen: false,
             title: '',
             text: '',
-            createElemenet: true,
+            showCreateElement: true,
             trigger() {
                 return;
+            },
+            triggerCreateContainer() {
+                return;
+            },
+            triggerCreateSkeleton() {
+                return;
+            },
+
+            // Create element
+            createElement(type, parentId = null) {
+                newElement = {};
+                if (type == 'container') {
+                    newElement = {
+                        type: 'container',
+                        isSelected: true,
+                        classes: {
+                            display: 'flex',
+                            flexDirection: 'flex-row',
+                        }
+                    }
+                } else if (type == 'skeleton') {
+                    newElement = {
+                        type: 'skeleton',
+                        isSelected: true,
+                        classes: {
+                            height: 'h-8',
+                            width: 'w-full',
+                            rounded: 'rounded-md'
+                        }
+                    }
+                }
+
+                $data.utilities.deselectElement();
+                if (parentId == null) {
+                    $data.elements = [
+                        newElement
+                    ]
+                }
+
+                $data.utilities.assignUniqueIds();
+                $data.options.draw();
+                this.isOpen = false;
             }
         }
     }"
@@ -970,7 +1012,7 @@
 
         if (elements == null) {
             element = presets.preset1.elements;
-            utilities.assignUniqueIds(element);
+            utilities.assignUniqueIds();
             localStorage.elements = JSON.stringify(element);
             elements = JSON.parse(localStorage.elements);
         }
@@ -1212,7 +1254,7 @@
                         modal.isOpen = true;
                         modal.title = 'Clear Canvas';
                         modal.text = 'This will remove all created elements. Do you want to proceed?';
-                        modal.createElement = false;
+                        modal.showCreateElement = false;
                         modal.trigger = () => {
                             elements = [];
                             options.draw();
@@ -1270,7 +1312,7 @@
 
                     <!-- Output -->  
                     <template x-if="elements.length > 0" hidden>
-                        <div class="mx-4 my-16 sm:mx-8"
+                        <div class="px-4 py-16 sm:px-8"
                             x-html="output.setup()"
                         >
                         </div>
@@ -1289,17 +1331,18 @@
                     
                     <div class="p-2">
                         <button type="button" class="w-full px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
-                        @click="
-                            modal.isOpen = true;
-                            modal.title = 'Create Element';
-                            modal.text = 'This will remove all created elements. Do you want to proceed?';
-                            modal.createElement = true;
-                            modal.trigger = () => {
-                                elements = [];
-                                options.draw();
-                                modal.isOpen = false;
-                            }
-                        "
+                            @click="
+                                modal.isOpen = true;
+                                modal.title = 'Create Element';
+                                modal.text = 'Choose which element would you like to create.';
+                                modal.showCreateElement = true;
+                                modal.triggerCreateContainer = () => {
+                                    modal.createElement('container');
+                                }
+                                modal.triggerCreateSkeleton = () => {
+                                    modal.createElement('skeleton');
+                                }
+                            "
                         >Create Element</button>
                     </div>
                 </div>
@@ -1344,8 +1387,8 @@
             x-init="
             
                 // Force focus on focus trap
-                $watch('modal.isOpen', modalIsOpen => { 
-                    if (modalIsOpen) {
+                $watch('modal.isOpen', isModalOpen => { 
+                    if (isModalOpen) {
                         $el.setAttribute('tabindex', 1);
                         $el.focus();
                         setTimeout(() => {
@@ -1354,10 +1397,16 @@
                     } else {
                         modal.text = '';
                         modal.title = '';
-                        modal.createElement = false;
+                        modal.showCreateElement = false;
                         modal.trigger = () => { 
                             return; 
-                        };      
+                        };     
+                        modal.triggerCreateContainer = () => { 
+                            return; 
+                        };   
+                        modal.triggerCreateSkeleton = () => { 
+                            return; 
+                        };     
                     }
                 })
             "
@@ -1401,7 +1450,7 @@
                     <p class="text-lg font-bold text-black sm:text-xl lg:text-2xl dark:text-white" x-text="modal.title"></p>
                     <p class="text-base text-neutral-700 dark:text-neutral-300" x-text="modal.text"></p>
                 </div>
-                <template x-if="!modal.createElement">
+                <template x-if="!modal.showCreateElement">
                     <div class="flex flex-wrap justify-center gap-2 mt-8">
                         <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
                             @click="modal.trigger"
@@ -1410,6 +1459,16 @@
                             :aria-expanded="modal.isOpen ? true : false"
                             @click="modal.isOpen = false"
                         >No</button>
+                    </div>
+                </template>
+                <template x-if="modal.showCreateElement">
+                    <div class="flex flex-wrap justify-center gap-2 mt-8">
+                        <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
+                            @click="modal.triggerCreateContainer"
+                        >Container</button>
+                        <button type="button" class="px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
+                            @click="modal.triggerCreateSkeleton"
+                        >Skeleton</button>
                     </div>
                 </template>
             </div>
