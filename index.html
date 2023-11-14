@@ -420,13 +420,10 @@
             // Assign ids on element
             assignUniqueIds(elements = $data.elements, parentId = '') {
                 elements.forEach((element, index) => {
-                    const uniqueId = parentId + '_' + index; // Creating a unique ID
-            
-                    // Assigning the unique ID to the current element
+                    const uniqueId = parentId + '_' + index;
                     element.id = uniqueId;
             
                     if (element.childs && element.childs.length > 0) {
-                        // Recursively assign IDs to child elements
                         this.assignUniqueIds(element.childs, uniqueId);
                     }
                 });
@@ -441,19 +438,80 @@
                 ].join(' ').trim()
             },
 
-            // Select current element
-            selectCurrentElement(id, elements = $data.elements) {
+            findElementById(id, elements = $data.elements) {
+                targetElement = null
                 elements.forEach((element) => {
                     if (element.id == id) {
-                        element.isSelected = true;
-                    } else {
-                        element.isSelected = false;
+                        targetElement = element;
                     }
 
-                    if (element.childs) {
-                        this.selectCurrentElement(id, element.childs);
+                    if (targetElement == null && element.childs) {
+                        targetElement = this.findElementById(id, element.childs)
                     }
                 })
+                return targetElement;
+            },
+
+
+            // Create element
+            createElement(type, parentId = null) {
+                newElement = {};
+                if (type == 'container') {
+                    newElement = {
+                        type: 'container',
+                        isSelected: true,
+                        classes: {
+                            display: 'flex',
+                            flexDirection: 'flex-row',
+                        }
+                    }
+                } else if (type == 'skeleton') {
+                    newElement = {
+                        type: 'skeleton',
+                        isSelected: true,
+                        classes: {
+                            height: 'h-8',
+                            width: 'w-full',
+                            rounded: 'rounded-md'
+                        }
+                    }
+                }
+
+                $data.utilities.deselectElement();
+                if (parentId == null) {
+                    $data.elements = [
+                        newElement
+                    ]
+                } else {
+                    element = $data.utilities.findElementById(parentId);
+
+                    if (element != null) {
+                        console.log(element)
+                        element.childs.push(newElement);
+                    }
+                }
+
+                this.assignUniqueIds();
+                $data.options.draw();
+            },
+
+            // Update element class properties
+            updateProperties(id, property, value) {
+                element = this.findElementById(id);
+
+                if (element != null) {
+                    element.classes[property] = value;
+                }
+            },
+
+            // Select current element
+            selectCurrentElement(id) {
+                this.deselectElement();
+                element = this.findElementById(id);
+
+                if (element != null) {
+                    element.isSelected = true;
+                }
             },
 
             // Deselect current element
@@ -467,19 +525,7 @@
                 })
             },
 
-            // Update element class properties
-            updateProperties(id, property, value, elements = $data.elements) {
-                elements.forEach((element) => {
-                    if (element.id == id) {
-                        element.classes[property] = value;
-                    }
-                    if (element.childs) {
-                        this.updateProperties(id, property, value, element.childs);
-                    }
-                })
-            },
         },
-
 
         output: {
 
@@ -540,7 +586,22 @@
 
                     if (element.type === 'container') {
                         html +=`
-                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Create child element&quot;>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Create child element&quot;
+                                @click=&quot;
+                                    modal.isOpen = true;
+                                    modal.title = 'Create Element';
+                                    modal.text = 'Choose which element would you like to create.';
+                                    modal.showCreateElement = true;
+                                    modal.triggerCreateContainer = () => {
+                                        utilities.createElement('container', '${element.id}');
+                                        modal.isOpen = false;
+                                    }
+                                    modal.triggerCreateSkeleton = () => {
+                                        utilities.createElement('skeleton', '${element.id}');
+                                        modal.isOpen = false;
+                                    }
+                                &quot;
+                                >
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                         <path d=&quot;M12 5l0 14&quot; />
@@ -966,42 +1027,6 @@
             triggerCreateSkeleton() {
                 return;
             },
-
-            // Create element
-            createElement(type, parentId = null) {
-                newElement = {};
-                if (type == 'container') {
-                    newElement = {
-                        type: 'container',
-                        isSelected: true,
-                        classes: {
-                            display: 'flex',
-                            flexDirection: 'flex-row',
-                        }
-                    }
-                } else if (type == 'skeleton') {
-                    newElement = {
-                        type: 'skeleton',
-                        isSelected: true,
-                        classes: {
-                            height: 'h-8',
-                            width: 'w-full',
-                            rounded: 'rounded-md'
-                        }
-                    }
-                }
-
-                $data.utilities.deselectElement();
-                if (parentId == null) {
-                    $data.elements = [
-                        newElement
-                    ]
-                }
-
-                $data.utilities.assignUniqueIds();
-                $data.options.draw();
-                this.isOpen = false;
-            }
         }
     }"
     x-init="
@@ -1011,9 +1036,9 @@
         isAnimationEnabled = localStorage.isAnimationEnabled;
 
         if (elements == null) {
-            element = presets.preset1.elements;
+            elements = presets.preset1.elements;
             utilities.assignUniqueIds();
-            localStorage.elements = JSON.stringify(element);
+            localStorage.elements = JSON.stringify(elements);
             elements = JSON.parse(localStorage.elements);
         }
 
@@ -1337,10 +1362,12 @@
                                 modal.text = 'Choose which element would you like to create.';
                                 modal.showCreateElement = true;
                                 modal.triggerCreateContainer = () => {
-                                    modal.createElement('container');
+                                    utilities.createElement('container');
+                                    modal.isOpen = false;
                                 }
                                 modal.triggerCreateSkeleton = () => {
-                                    modal.createElement('skeleton');
+                                    utilities.createElement('skeleton');
+                                    modal.isOpen = false;
                                 }
                             "
                         >Create Element</button>
