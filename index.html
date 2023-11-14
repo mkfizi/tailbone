@@ -545,6 +545,33 @@
                 $data.options.draw();
             },
 
+            // Remove element
+            removeElement(id) {
+                parentElement = this.findParentElementById(id);
+                
+                position = 0;
+                if (parentElement) {
+                    parentElement.childs.forEach((childElement, index) => {
+                        if (childElement.id == id) {
+                            position = index;
+                        }
+                    });
+                    
+                    parentElement.childs.splice(position, 1);
+                } else {
+                    $data.elements.forEach((childElement, index) => {
+                        if (childElement.id == id) {
+                            position = index;
+                        }
+                    });
+
+                    $data.elements.splice(position, 1);
+                }
+
+                $data.elements = this.assignUniqueIds();
+                $data.options.draw();
+            },
+
             // Update element class properties
             updateProperties(id, property, value) {
                 element = this.findElementById(id);
@@ -671,7 +698,19 @@
                                         <path d=&quot;M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2&quot; />
                                       </svg>
                                 </button>
-                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Remove element&quot;
+                                    @click=&quot;
+                                        utilities.selectCurrentElement('${element.id}');
+                                        modal.isOpen = true;
+                                        modal.title = 'Remove element';
+                                        modal.text = 'This will remove selected element. Do you want to proceed?';
+                                        modal.showCreateElement = false;
+                                        modal.trigger = () => {
+                                            utilities.removeElement('${element.id}');
+                                            modal.isOpen = false;
+                                        }
+                                    &quot;
+                                >
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                         <path d=&quot;M18 6l-12 12&quot; />
