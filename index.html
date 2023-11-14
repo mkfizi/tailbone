@@ -72,13 +72,12 @@
         isAnimationEnabled: true,
         presets: {
             preset1: {
-                title: 'Preset 1',
+                title: 'Social',
                 elements: [
                     {
                         type: 'container',
                         isSelected: false,
                         classes: {
-                            display: 'flex',
                             flexDirection: 'flex-row',
                             gap: 'gap-2'
                         },
@@ -96,9 +95,8 @@
                                 type: 'container',
                                 isSelected: false,
                                 classes: {
-                                        display: 'flex',
-                                        flexDirection: 'flex-col',
-                                        gap: 'gap-1'
+                                    flexDirection: 'flex-col',
+                                    gap: 'gap-1'
                                 },
                                 childs: [
                                     {
@@ -433,6 +431,7 @@
             addClassToElement(type, classes) {
                 return [
                     Object.values(classes).join(' '),
+                    type === 'container' ? 'flex flex-auto' : '',
                     type === 'skeleton' && $data.isAnimationEnabled ? 'animate-pulse' : '',
                     type === 'skeleton' ? 'bg-neutral-300 dark:bg-neutral-700' : ''
                 ].join(' ').trim()
@@ -461,7 +460,6 @@
                         type: 'container',
                         isSelected: true,
                         classes: {
-                            display: 'flex',
                             flexDirection: 'flex-row',
                         }
                     }
