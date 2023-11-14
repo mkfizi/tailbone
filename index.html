@@ -1203,7 +1203,7 @@
 >
 
     <!-- Navbar -->
-    <nav class="sticky top-0 z-10 bg-white border-b dark:bg-neutral-900"
+    <nav class="sticky top-0 z-20 bg-white border-b dark:bg-neutral-900"
         x-data="{
             navbarHeight: null,
             isScrolled: false, 
@@ -1553,52 +1553,87 @@
                 <p class="self-end text-base font-bold text-neutral-700 dark:text-neutral-300">Code:</p>
                 
                 <!-- Copy code button -->
-                <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Copy code"
+                <div
                     x-data="{
                         isCopied: false,
                         codeOutput: ''
-                    }"
-                    @click="
-                        codeOutput = code.setup();
-                        codeOutput = codeOutput.replaceAll('  animate-pulse', ' animate-pulse');
-                        navigator.clipboard.writeText(codeOutput);
-                        isCopied = true;
+                    }">
+                    <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Copy code"
+                        
+                        @click="
+                            codeOutput = code.setup();
+                            codeOutput = codeOutput.replaceAll('  animate-pulse', ' animate-pulse');
+                            navigator.clipboard.writeText(codeOutput);
+                            isCopied = true;
 
-                        setTimeout(() => {
-                            isCopied = false
-                        }, 3000)
-                    "
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                        :class="{
-                            'hidden': isCopied
-                        }"
+                            setTimeout(() => {
+                                isCopied = false
+                            }, 3000)
+                        "
                     >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                        <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-                    </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                        :class="{
-                            'hidden': !isCopied
-                        }"
-                    >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                        <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-                        <path d="M9 14l2 2l4 -4" />
-                    </svg>
-                </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                            :class="{
+                                'hidden': isCopied
+                            }"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                            <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                            :class="{
+                                'hidden': !isCopied
+                            }"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                            <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                            <path d="M9 14l2 2l4 -4" />
+                        </svg>
+                    </button>
+
+                    <!-- Copy alert -->
+                    <div class="fixed z-20 w-full max-w-xs px-4 mt-2 transform -translate-x-1/2 top-16 left-1/2 sm:px-8">
+                        <div class="flex items-center gap-4 px-4 py-3 border rounded-md bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700"
+                            :class="!isCopied ? 'hidden invisible': 'flex'"
+                            :aria-hidden="!isCopied ? true : false" 
+                        >
+                            <div class="grow">
+                                <span class="text-base text-neutral-700 dark:text-neutral-300">Code has been copied.</span>
+                            </div>
+                            <button type="button" class="shrink-0 group" aria-controls="alert" aria-label="Close alert"
+                                @click="isCopied = false"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-neutral-500 dark:stroke-neutral-400 group-hover:stroke-black dark:group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M18 6l-12 12" />
+                                    <path d="M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="p-4 overflow-auto border rounded-md bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900"
-                x-init="
-                    code.draw($el);
-                    
-                    $watch('elements', ()=> {
+            
+
+            <template x-if="elements.length > 0" hidden>
+                <div class="p-4 overflow-auto border rounded-md bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900"
+                    x-init="
                         code.draw($el);
-                    })
-                "
-            ></div>
+                        
+                        $watch('elements', ()=> {
+                            code.draw($el);
+                        })
+                    "
+                ></div>
+            </template>
+            <template x-if="elements.length == 0" hidden>
+                <div class="p-4 overflow-auto border rounded-md bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900">
+                    <div class="flex items-center justify-center h-64 mx-4 sm:mx-8">
+                        <p class="text-base text-neutral-700 dark:text-neutral-300">There's nothing to show here, click on `Create Element` to begin.</p>
+                    </div>
+                </div>
+            </template>
         </section>
 
         <!-- Modal -->
