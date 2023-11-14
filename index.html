@@ -126,9 +126,9 @@
                         type: 'container',
                         isSelected: false,
                         classes: {
-                            display: 'flex',
                             flexDirection: 'flex-row',
-                            gap: 'gap-4'
+                            gap: 'gap-4',
+                            height: 'h-16'
                         },
                     }
                 ]
@@ -417,13 +417,16 @@
 
             // Assign ids on element
             assignUniqueIds(elements = $data.elements, parentId = '') {
-                elements.forEach((element, index) => {
+                
+                return elements.map((element, index) => {
                     const uniqueId = parentId + '_' + index;
-                    element.id = uniqueId;
+                    const newElement = { ...element, id: uniqueId };
             
                     if (element.childs && element.childs.length > 0) {
-                        this.assignUniqueIds(element.childs, uniqueId);
+                        newElement.childs = this.assignUniqueIds(element.childs, uniqueId);
                     }
+            
+                    return newElement;
                 });
             },
 
@@ -437,6 +440,7 @@
                 ].join(' ').trim()
             },
 
+            // Find element by id
             findElementById(id, elements = $data.elements) {
                 targetElement = null
                 elements.forEach((element) => {
@@ -451,6 +455,25 @@
                 return targetElement;
             },
 
+            // Find parent id
+            findParentElementById(id,  elements = $data.elements) {
+                parentElement = null;
+                elements.forEach((element) => {
+                    if (element.childs) {
+                        element.childs.forEach((childElement) => {
+                            if (childElement.id === id) {
+                                parentElement = element;
+                            }
+                        })
+                        
+                        if (!parentElement) {
+                            parentElement = this.findParentElementById(id, element.childs);
+                        }
+                    }
+                });
+                
+                return parentElement;
+            },
 
             // Create element
             createElement(type, parentId = null) {
@@ -461,6 +484,7 @@
                         isSelected: true,
                         classes: {
                             flexDirection: 'flex-row',
+                            height: 'h-16',
                         }
                     }
                 } else if (type == 'skeleton') {
@@ -489,7 +513,35 @@
                     }
                 }
 
-                this.assignUniqueIds();
+                $data.elements = this.assignUniqueIds();
+                $data.options.draw();
+            },
+
+            // Duplicate element
+            duplicateElement(id) {
+                element = this.findElementById(id);
+                parentElement = this.findParentElementById(id);
+                
+                position = 0;
+                if (parentElement) {
+                    parentElement.childs.forEach((childElement, index) => {
+                        if (childElement.id == element.id) {
+                            position = index;
+                        }
+                    });
+                    
+                    parentElement.childs.splice(position, 0, element);
+                } else {
+                    $data.elements.forEach((childElement, index) => {
+                        if (childElement.id == element.id) {
+                            position = index;
+                        }
+                    });
+
+                    $data.elements.splice(position, 0, element);
+                }
+
+                $data.elements = this.assignUniqueIds();
                 $data.options.draw();
             },
 
@@ -610,7 +662,9 @@
                     }
                                     
                     html += `
-                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Duplicate element&quot;>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Duplicate element&quot;
+                                    @click=&quot;utilities.duplicateElement('${element.id}')&quot;
+                                >
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                         <path d=&quot;M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z&quot; />
@@ -1036,7 +1090,7 @@
 
         if (elements == null) {
             elements = presets.preset1.elements;
-            utilities.assignUniqueIds();
+            $data.elements = utilities.assignUniqueIds();
             localStorage.elements = JSON.stringify(elements);
             elements = JSON.parse(localStorage.elements);
         }
