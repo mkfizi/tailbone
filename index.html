@@ -524,20 +524,10 @@
                 
                 position = 0;
                 if (parentElement) {
-                    parentElement.childs.forEach((childElement, index) => {
-                        if (childElement.id == element.id) {
-                            position = index;
-                        }
-                    });
-                    
+                    position = parentElement.childs.findIndex(childElement => childElement.id === id);
                     parentElement.childs.splice(position, 0, element);
                 } else {
-                    $data.elements.forEach((childElement, index) => {
-                        if (childElement.id == element.id) {
-                            position = index;
-                        }
-                    });
-
+                    position = $data.elements.findIndex(childElement => childElement.id === id);
                     $data.elements.splice(position, 0, element);
                 }
 
@@ -551,23 +541,46 @@
                 
                 position = 0;
                 if (parentElement) {
-                    parentElement.childs.forEach((childElement, index) => {
-                        if (childElement.id == id) {
-                            position = index;
-                        }
-                    });
-                    
+                    position = parentElement.childs.findIndex(childElement => childElement.id === id);
                     parentElement.childs.splice(position, 1);
                 } else {
-                    $data.elements.forEach((childElement, index) => {
-                        if (childElement.id == id) {
-                            position = index;
-                        }
-                    });
-
+                    position = $data.elements.findIndex(childElement => childElement.id === id);
                     $data.elements.splice(position, 1);
                 }
 
+                $data.elements = this.assignUniqueIds();
+                $data.options.draw();
+            },
+
+            // Move element
+            moveElement(movement, id) {
+                element = this.findElementById(id);
+                parentElement = this.findParentElementById(id);
+
+                position = 0;
+                if (parentElement) {
+                    position = parentElement.childs.findIndex(childElement => childElement.id === id);
+
+                    if (movement == 'up' && position != 0) {
+                        parentElement.childs.splice(position, 1);
+                        parentElement.childs.splice(position - 1, 0, element);
+                    } else if (movement == 'down' && position != parentElement.childs.length - 1) {
+                        parentElement.childs.splice(position, 1);
+                        parentElement.childs.splice(position + 1, 0, element);
+                    }
+                } else {
+                    position = $data.elements.findIndex(childElement => childElement.id === id);
+
+                    if (movement == 'up' && position != 0) {
+                        $data.elements.splice(position, 1);
+                        $data.elements.splice(position - 1, 0, element);
+                    } else if (movement == 'down' && position != $data.elements.length - 1) {
+                        $data.elements.splice(position, 1);
+                        $data.elements.splice(position + 1, 0, element);
+                    }
+                }
+
+                this.selectCurrentElement(id);
                 $data.elements = this.assignUniqueIds();
                 $data.options.draw();
             },
@@ -717,7 +730,9 @@
                                         <path d=&quot;M6 6l12 12&quot; />
                                     </svg>
                                 </button>
-                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element up&quot;>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element up&quot;
+                                    @click=&quot;utilities.moveElement('up', '${element.id}')&quot;
+                                >
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                         <path d=&quot;M12 5l0 14&quot; />
@@ -725,7 +740,9 @@
                                         <path d=&quot;M6 11l6 -6&quot; />
                                     </svg>
                                 </button>
-                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element down&quot;>
+                                <button type=&quot;button&quot; class=&quot; text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white &quot; aria-label=&quot;Move element down&quot;
+                                    @click=&quot;utilities.moveElement('down', '${element.id}')&quot;
+                                >
                                     <svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot; h-6 w-6 &quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; stroke-width=&quot;1.5&quot; stroke=&quot;currentColor&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>
                                         <path stroke=&quot;none&quot; d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/>
                                         <path d=&quot;M12 5l0 14&quot; />
