@@ -30,7 +30,7 @@
     <meta property="og:url" content="https://mkfizi.dev/tailbone">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Tailbone">
-    <meta property="og:image" content="https://mkfizi.dev/src/images/fb-og.jpg">
+    <meta property="og:image" content="https://mkfizi.dev/tailbone/src/images/fb-og.jpg">
     <meta name="description" content="TailwindCSS UX Skeleton Generator.">
     <meta property="og:site_name" content="Tailbone">
 
@@ -41,7 +41,7 @@
     <meta name="twitter:url" content="https://mkfizi.dev/tailbone">
     <meta name="twitter:title" content="Tailbone">
     <meta name="twitter:description" content="TailwindCSS UX Skeleton Generator.">
-    <meta name="twitter:image" content="https://mkfizi.dev/src/images/tw-card.jpg">
+    <meta name="twitter:image" content="https://mkfizi.dev/tailbone/src/images/x-card.jpg">
 
     <!-- Favicon -->
     <link rel="manifest" href="./site.webmanifest">
@@ -56,8 +56,10 @@
     <link rel="preload" href="./src/css/app.css" as="style">
 
     <!-- Scripts -->
+    <script src="./src/js/rainbow.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="./src/js/app.js" defer></script>
+    <link rel="preload" href="./src/js/rainbow.min.js" as="script">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" as="script">
     <link rel="preload" href="./src/js/app.js" as="script">
 
@@ -512,7 +514,6 @@
                         element.childs.push(newElement);
                     }
                 }
-
                 $data.elements = this.assignUniqueIds();
                 $data.options.draw();
             },
@@ -531,6 +532,7 @@
                     $data.elements.splice(position, 0, element);
                 }
 
+                this.deselectElement();
                 $data.elements = this.assignUniqueIds();
                 $data.options.draw();
             },
@@ -1122,6 +1124,39 @@
             }
         },
 
+        code: {
+            setup(elements = $data.elements, indent = 0) {
+                html = '';
+                elements.forEach((element) => {
+                    const classes = $data.utilities.addClassToElement(element.type, element.classes);
+                    const currentIndent = ' '.repeat(indent * 4);
+
+                    if (element.childs && element.childs.length > 0) {
+                        html += `${currentIndent}<div class=&quot;${classes}&quot;>`;
+
+                        // Draw board recursively if element contains child
+                        html += `\n${this.setup(element.childs, indent + 1)}${currentIndent}`;
+                        html += `</div>\n`;
+                    } else {
+                        html += `${currentIndent}<div class=&quot;${classes}&quot;></div>\n`;
+                    }
+                })
+
+                return html;
+            },
+
+            draw(targetElement) {
+                code = this.setup();
+                code = code.replaceAll('  animate-pulse', ' animate-pulse');
+                div = document.createElement('div');
+                div.innerHTML = `<pre><code data-language=&quot;html&quot;>${code}</code></pre>`
+                Rainbow.color(div, function() {
+                    targetElement.innerHTML = '';
+                    targetElement.appendChild(div)
+                });
+            }
+        },
+
         modal: {
             isOpen: false,
             title: '',
@@ -1434,7 +1469,7 @@
                 </div>
             </div>
 
-            <div class="grid overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid mb-4 overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
                 
                 <!-- Output background -->
                 <div class="overflow-auto border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700"
@@ -1510,8 +1545,49 @@
                             showProperties: false,
                         }"
                         x-init="options.draw()"></div>
-                </div>
+                </div> 
             </div>
+
+            <!-- Code -->
+            <div class="flex justify-between mb-4">
+                <p class="self-end text-base font-bold text-neutral-700 dark:text-neutral-300">Code:</p>
+                
+                <!-- Copy code button -->
+                <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Copy code"
+                    x-data="{
+                        isCopied: false
+                    }"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                        :class="{
+                            'hidden': isCopied
+                        }"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                        <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                        :class="{
+                            'hidden': !isCopied
+                        }"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                        <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                        <path d="M9 14l2 2l4 -4" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-auto border rounded-md bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900"
+                x-init="
+                    code.draw($el);
+                    
+                    $watch('elements', ()=> {
+                        code.draw($el);
+                    })
+                "
+            ></div>
         </section>
 
         <!-- Modal -->

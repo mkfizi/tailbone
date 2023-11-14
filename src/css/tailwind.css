@@ -5,3 +5,35 @@
 body{
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+[data-language] code,
+[class^="lang"] code,
+pre [data-language],
+pre [class^="lang"] {
+	opacity: 0;
+}
+
+[data-language] code.rainbow-show,
+[class^="lang"] code.rainbow-show,
+pre [data-language].rainbow-show,
+pre [class^="lang"].rainbow-show {
+	opacity: 1
+}
+
+pre {
+    @apply relative text-sm text-neutral-700 dark:text-neutral-300;
+	word-wrap: break-word;
+}
+pre .support.tag,
+pre .support.tag-name{
+	@apply text-black dark:text-white
+}
+pre .support.attribute,
+pre .support.operator {
+	@apply text-neutral-600 dark:text-neutral-500
+}
+pre .string.quote,
+pre .string.value {
+	@apply text-blue-700 dark:text-blue-300
+}
+
