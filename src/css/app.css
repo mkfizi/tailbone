@@ -1548,6 +1548,14 @@ video {
   width: 100vw;
 }
 
+.min-w-\[32rem\] {
+  min-width: 32rem;
+}
+
+.min-w-\[28rem\] {
+  min-width: 28rem;
+}
+
 .max-w-screen-md {
   max-width: 768px;
 }

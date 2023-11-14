@@ -1146,10 +1146,10 @@
             },
 
             draw(targetElement) {
-                code = this.setup();
-                code = code.replaceAll('  animate-pulse', ' animate-pulse');
+                codeOutput = this.setup();
+                codeOutput = codeOutput.replaceAll('  animate-pulse', ' animate-pulse');
                 div = document.createElement('div');
-                div.innerHTML = `<pre><code data-language=&quot;html&quot;>${code}</code></pre>`
+                div.innerHTML = `<pre><code data-language=&quot;html&quot;>${codeOutput}</code></pre>`
                 Rainbow.color(div, function() {
                     targetElement.innerHTML = '';
                     targetElement.appendChild(div)
@@ -1481,7 +1481,7 @@
 
                     <!-- Output -->  
                     <template x-if="elements.length > 0" hidden>
-                        <div class="px-4 py-16 sm:px-8"
+                        <div class="px-4 py-16 min-w-[28rem] sm:px-8"
                             x-html="output.setup()"
                         >
                         </div>
@@ -1555,8 +1555,19 @@
                 <!-- Copy code button -->
                 <button type="button" class="p-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-label="Copy code"
                     x-data="{
-                        isCopied: false
+                        isCopied: false,
+                        codeOutput: ''
                     }"
+                    @click="
+                        codeOutput = code.setup();
+                        codeOutput = codeOutput.replaceAll('  animate-pulse', ' animate-pulse');
+                        navigator.clipboard.writeText(codeOutput);
+                        isCopied = true;
+
+                        setTimeout(() => {
+                            isCopied = false
+                        }, 3000)
+                    "
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
                         :class="{
