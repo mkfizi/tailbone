@@ -1709,7 +1709,7 @@
                 </div>
             </div>
 
-            <div class="grid mb-4 overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid lg:min-h-[32rem] mb-4 overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700 sm:grid-cols-2 lg:grid-cols-4">
                 
                 <!-- Output background -->
                 <div class="overflow-auto border-b sm:col-span-2 lg:order-2 bg-neutral-50 dark:bg-neutral-900 lg:border-b-0 lg:border-x border-neutral-300 dark:border-neutral-700"
@@ -1947,8 +1947,8 @@
                     <div class="grid mx-auto space-y-4">
                         <template x-for="(image, childIndex) in howToUse.images" hidden>
                             <div class="w-full overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700">
-                                <img class="w-full h-auto dark:hidden" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}.jpg`" :alt="image">
-                                <img class="hidden w-full h-auto dark:block" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}-dark.jpg`" :alt="image">
+                                <img class="w-full h-auto dark:hidden" width="512" height="288" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}.webp`" :alt="image">
+                                <img class="hidden w-full h-auto dark:block" width="512" height="288" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}-dark.webp`" :alt="image">
                             </div>
                         </template>
                     </div>

@@ -1424,6 +1424,10 @@ video {
   min-height: calc(var(--vh, 1vh) * 100);
 }
 
+.min-h-\[24rem\] {
+  min-height: 24rem;
+}
+
 .w-0 {
   width: 0px;
 }
@@ -2562,6 +2566,14 @@ pre .string.value) {
 
   .lg\:h-auto {
     height: auto;
+  }
+
+  .lg\:min-h-\[36rem\] {
+    min-height: 36rem;
+  }
+
+  .lg\:min-h-\[32rem\] {
+    min-height: 32rem;
   }
 
   .lg\:w-auto {
