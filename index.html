@@ -72,9 +72,9 @@
         breakpointSize: 1024,
         elements: null,
         isAnimationEnabled: true,
-        presets: {
-            preset1: {
-                title: 'Social',
+        presets: [
+            {
+                title: 'social',
                 elements: [
                     {
                         type: 'container',
@@ -128,14 +128,233 @@
                         type: 'container',
                         isSelected: false,
                         classes: {
-                            flexDirection: 'flex-row',
-                            gap: 'gap-4',
-                            height: 'h-16'
+                            flexDirection: 'flex-col',
+                            gap: 'gap-2',
+                            marginTop: 'mt-4'
                         },
+                        childs: [
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-3',
+                                    width: 'w-96',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-3',
+                                    width: 'w-80',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-3',
+                                    width: 'w-96',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-3',
+                                    width: 'w-64',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                        ]
                     }
                 ]
+            },
+            {
+                title: 'product',
+                elements: [
+                    {
+                        type: 'container',
+                        isSelected: false,
+                        classes: {
+                            flexDirection: 'flex-row',
+                            gap: 'gap-4'
+                        },
+                        childs: [
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-36',
+                                    width: 'w-36',
+                                    rounded: 'rounded-md'
+                                }
+                            },
+                            {
+                                type: 'container',
+                                isSelected: false,
+                                classes: {
+                                    flexDirection: 'flex-col',
+                                    gap: 'gap-2',
+                                },
+                                childs: [
+                                    {
+                                        type: 'container',
+                                        isSelected: false,
+                                        classes: {
+                                            flexDirection: 'flex-col',
+                                            gap: 'gap-1',
+                                            marginTop: 'mt-2',
+                                            marginBottom: 'mb-4'
+                                        },
+                                        childs: [
+                                            {
+                                                type: 'skeleton',
+                                                isSelected: false,
+                                                classes: {
+                                                    height: 'h-4',
+                                                    width: 'w-24',
+                                                    rounded: 'rounded-md',
+                                                }
+                                            },
+                                            {
+                                                type: 'skeleton',
+                                                isSelected: false,
+                                                classes: {
+                                                    height: 'h-2',
+                                                    width: 'w-16',
+                                                    rounded: 'rounded-md'
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: 'skeleton',
+                                        isSelected: false,
+                                        classes: {
+                                            height: 'h-3',
+                                            width: 'w-64',
+                                            rounded: 'rounded-md'
+                                        }
+                                    },
+                                    {
+                                        type: 'skeleton',
+                                        isSelected: false,
+                                        classes: {
+                                            height: 'h-3',
+                                            width: 'w-56',
+                                            rounded: 'rounded-md'
+                                        }
+                                    },
+                                    {
+                                        type: 'skeleton',
+                                        isSelected: false,
+                                        classes: {
+                                            height: 'h-3',
+                                            width: 'w-60',
+                                            rounded: 'rounded-md'
+                                        }
+                                    },
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: 'video',
+                elements: [
+                    {
+                        type: 'skeleton',
+                        isSelected: false,
+                        classes: {
+                            height: 'h-48',
+                            width: 'w-96',
+                            rounded: 'rounded-md',
+                            marginBottom: 'mb-4'
+                        }
+                    },
+                    {
+                        type: 'container',
+                        isSelected: false,
+                        classes: {
+                            flexDirection: 'flex-col',
+                            gap: 'gap-1',
+                            marginBottom: 'mb-4'
+                        },
+                        childs: [
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-4',
+                                    width: 'w-48',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-2',
+                                    width: 'w-24',
+                                    rounded: 'rounded-md'
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        type: 'container',
+                        isSelected: false,
+                        classes: {
+                            flexDirection: 'flex-col',
+                            gap: 'gap-2',
+                        },
+                        childs: [
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-4',
+                                    width: 'w-80',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-4',
+                                    width: 'w-96',
+                                    rounded: 'rounded-md'
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-4',
+                                    width: 'w-72',
+                                    rounded: 'rounded-md',
+                                }
+                            },
+                            {
+                                type: 'skeleton',
+                                isSelected: false,
+                                classes: {
+                                    height: 'h-4',
+                                    width: 'w-48',
+                                    rounded: 'rounded-md',
+                                }
+                            }
+                        ]
+                    },
+                ]
             }
-        },
+        ],
         properties: {
             flexDirection: {
                 row: 'flex-row',
@@ -416,6 +635,15 @@
         },
 
         utilities: {
+            // Check if JSON valid or not
+            isValidJSON(elements) {
+                try {
+                    JSON.parse(elements);
+                    return JSON.parse(elements);;
+                } catch (error) {
+                    return null;
+                }
+            },
 
             // Assign ids on element
             assignUniqueIds(elements = $data.elements, parentId = '') {
@@ -436,7 +664,7 @@
             addClassToElement(type, classes) {
                 return [
                     Object.values(classes).join(' '),
-                    type === 'container' ? 'flex flex-auto' : '',
+                    type === 'container' ? 'flex' : '',
                     type === 'skeleton' && $data.isAnimationEnabled ? 'animate-pulse' : '',
                     type === 'skeleton' ? 'bg-neutral-300 dark:bg-neutral-700' : ''
                 ].join(' ').trim()
@@ -717,7 +945,7 @@
                                     @click=&quot;
                                         utilities.selectCurrentElement('${element.id}');
                                         modal.isOpen = true;
-                                        modal.title = 'Remove element';
+                                        modal.title = 'Remove Element';
                                         modal.text = 'This will remove selected element. Do you want to proceed?';
                                         modal.showCreateElement = false;
                                         modal.trigger = () => {
@@ -1174,13 +1402,12 @@
         }
     }"
     x-init="
-
         // Initialize local storage values
-        elements = localStorage.elements != null ? JSON.parse(localStorage.elements) : null;
+        elements = localStorage.elements != null ? utilities.isValidJSON(localStorage.elements) : null;
         isAnimationEnabled = localStorage.isAnimationEnabled;
 
-        if (elements == null) {
-            elements = presets.preset1.elements;
+        if (elements == null || (typeof elements === 'object' && elements !== null)) {
+            elements = presets[1].elements;
             $data.elements = utilities.assignUniqueIds();
             localStorage.elements = JSON.stringify(elements);
             elements = JSON.parse(localStorage.elements);
@@ -1434,17 +1661,17 @@
                 
                 <div class="relative inline-block"
                     x-data="{ 
-                        isOpen: false 
+                        isPresetDropdownOpen: false 
                     }" 
-                    @click.outside="isOpen = false"
-                    @keydown.escape.window="isOpen = false"
+                    @click.outside="isPresetDropdownOpen = false"
+                    @keydown.escape.window="isPresetDropdownOpen = false"
                 >
                     <!-- Canvas presets dropdown -->
                     <button type="button" class="flex gap-2 px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none" aria-controls="presetsDropdown"
-                        :aria-expanded="isOpen ? true : false"
-                        @click="isOpen = !isOpen"
+                        :aria-expanded="isPresetDropdownOpen ? true : false"
+                        @click="isPresetDropdownOpen = !isPresetDropdownOpen"
                     >
-                        <span>Presets</span>
+                        <span>Preset</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="dropdown">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M6 9l6 6l6 -6" />
@@ -1452,19 +1679,29 @@
                     </button>
                     <ul id="presetsDropdown" class="absolute right-0 z-10 invisible hidden w-48 p-0.5 mt-2 bg-white border rounded-md border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 shadow" aria-labelledby="dropdown"
                         :class="{ 
-                            'hidden invisible': !isOpen 
+                            'hidden invisible': !isPresetDropdownOpen 
                         }"
-                        :aria-hidden="isOpen ? false : true"
+                        :aria-hidden="isPresetDropdownOpen ? false : true"
                     >
-                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 1</a>
-                        </li>
-                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 2</a>
-                        </li>
-                        <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                            <a href="#" class="block px-4 py-2 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">Preset 3</a>
-                        </li>
+                        <template x-for="preset in presets">
+                            <li class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                <button type="button" class="block w-full px-4 py-2 text-left text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white" 
+                                    x-text="preset.title.charAt(0).toUpperCase() + preset.title.slice(1)"
+                                    @click="
+                                        modal.isOpen = true;
+                                        modal.title = 'Apply Preset';
+                                        modal.text = `This will replace current elements with preset ${preset.title.charAt(0).toUpperCase() + preset.title.slice(1)}. Do you want to proceed?`;
+                                        modal.showCreateElement = false;
+                                        modal.trigger = () => {
+                                            elements = preset.elements;
+                                            elements = utilities.assignUniqueIds();
+                                            options.draw();
+                                            modal.isOpen = false;
+                                        }
+                                    "
+                                ></button>
+                            </li>
+                        </template>
                     </ul>
                 </div>
             </div>
@@ -1481,7 +1718,7 @@
 
                     <!-- Output -->  
                     <template x-if="elements.length > 0" hidden>
-                        <div class="px-4 py-16 min-w-[28rem] sm:px-8"
+                        <div class="px-4 py-16 min-w-[28rem] mx-auto sm:px-8"
                             x-html="output.setup()"
                         >
                         </div>
