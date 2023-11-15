@@ -312,6 +312,7 @@
                         classes: {
                             flexDirection: 'flex-col',
                             gap: 'gap-2',
+                            marginTop: 'mt-8'
                         },
                         childs: [
                             {
@@ -762,6 +763,8 @@
 
                 this.deselectElement();
                 $data.elements = this.assignUniqueIds();
+                localStorage.elements = JSON.stringify($data.elements);
+                $data.elements = JSON.parse(localStorage.elements);
                 $data.options.draw();
             },
 
@@ -1406,8 +1409,8 @@
         elements = localStorage.elements != null ? utilities.isValidJSON(localStorage.elements) : null;
         isAnimationEnabled = localStorage.isAnimationEnabled;
 
-        if (elements == null || (typeof elements === 'object' && elements !== null)) {
-            elements = presets[1].elements;
+        if (elements == null) {
+            elements = presets[0].elements;
             $data.elements = utilities.assignUniqueIds();
             localStorage.elements = JSON.stringify(elements);
             elements = JSON.parse(localStorage.elements);
@@ -1731,9 +1734,11 @@
                 </div>
                 
                 <!-- Layers -->
-                <div class="bg-white border-b divide-y lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700 divide-neutral-300 dark:divide-neutral-700">
-                    <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300">Layers</p>
-                    <div x-html="layers.setup()"></div>
+                <div class="bg-white border-b lg:order-1 dark:bg-neutral-800 sm:border-b-0 sm:border-r lg:border-r-0 border-neutral-300 dark:border-neutral-700">
+                    <p class="p-4 text-base font-bold text-neutral-700 dark:text-neutral-300"
+                        :class="{ 'border-b border-neutral-300 dark:border-neutral-700': elements.length > 0 }"
+                    >Layers</p>
+                    <div class="border-b border-neutral-300 dark:border-neutral-700" x-html="layers.setup()"></div>
                     
                     <div class="p-2">
                         <button type="button" class="w-full px-4 py-2 text-base font-semibold text-white bg-black border border-black rounded-md hover:border-neutral-700 hover:bg-neutral-700 dark:bg-neutral-600 dark:border-neutral-600 dark:hover:border-neutral-500 dark:hover:bg-neutral-500 disabled:opacity-50 disabled:pointer-events-none"
@@ -1836,7 +1841,7 @@
                             :aria-hidden="!isCopied ? true : false" 
                         >
                             <div class="grow">
-                                <span class="text-base text-neutral-700 dark:text-neutral-300">Code has been copied.</span>
+                                <span class="text-base text-neutral-700 dark:text-neutral-300">Code is copied.</span>
                             </div>
                             <button type="button" class="shrink-0 group" aria-controls="alert" aria-label="Close alert"
                                 @click="isCopied = false"
@@ -1873,8 +1878,86 @@
             </template>
         </section>
 
+        <!-- How to use section -->
+        <section id="how-to-use" class="pt-32 mx-auto"
+            x-data="{
+                howToUses : [
+                    {
+                        text: 'Click on <strong>Create Element</strong> button to create <strong>Container</strong> or <strong>Skeleton</strong> element.',
+                        images: [
+                            'How to use: Click Create Element button.',
+                            'How to use: Select element to create.',
+                        ]
+                    },
+                    {
+                        text: 'Click on elements in <strong>Layers Panel</strong> or <strong>Canvas Board</strong> to display and edit element properties.',
+                        images: [
+                            'How to use: Click element in Layers Panel.',
+                            'How to use: Click element in Canvas Board.',
+                            'How to use: Element property settings.',
+                        ]
+                    },
+                    {
+                        text: 'Click on buttons in <strong>Layers Panel</strong> to create new element, duplicate element, remove element or move element position.',
+                        images: [
+                            'How to use: Create new element, duplicate element, remove element or move element position buttons.',
+                        ]
+                    },
+                    {
+                        text: 'Click on <strong>Clear</strong> button to remove all elements and clear <strong>Canvas Board</strong>.',
+                        images: [
+                            'How to use: Click Clear button.',
+                            'How to use: Confirm remove all elements.',
+                        ]
+                    },
+                    {
+                        text: 'Click on <strong>Preset</strong> dropdown menu to replace all elements with <strong>Presets Element</strong>.',
+                        images: [
+                            'How to use: Click Preset dropdown menu.',
+                            'How to use: Select preset.',
+                            'How to use: Confirm replace elements with selected preset.',
+                        ]
+                    },
+                    {
+                        text: 'Click on <strong>Copy</strong> button to copy code output into clipboard and paste it in your project.',
+                        images: [
+                            'How to use: Click Copy button.',
+                        ]
+                    },
+                ]
+            }"
+        >
+            <div class="text-center">
+                <h3 class="text-2xl font-extrabold text-black sm:text-3xl lg:text-4xl dark:text-white">How to Use?</h3>
+                <p class="mt-2 text-lg text-neutral-700 sm:text-xl lg:text-2xl dark:text-neutral-300">Brief explaination on Tailbone usage.</p>
+            </div>
+            <template x-for="(howToUse, parentIndex) in howToUses" hidden>
+                <div class="grid gap-8 mx-auto mt-16 mb-8 lg:grid-cols-2 sm:max-w-screen-sm lg:max-w-screen-lg">
+                    <flex class="flex flex-col">
+                        <div class="flex items-center gap-4 lg:gap-8 sm:justify-center lg:justify-normal">
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full shrink-0 bg-neutral-200 dark:bg-neutral-700">
+                                <p class="text-sm text-black sm:text-base dark:text-white" x-text="parentIndex + 1"></p>
+                            </div>
+                            <p class="text-base text-neutral-700 dark:text-neutral-300" x-html="howToUse.text"></p>
+                        </div>
+                        <div class="relative flex-1 hidden w-px pt-4 left-6 lg:block">
+                            <div class="w-full h-full bg-neutral-300 dark:bg-neutral-700"></div>
+                        </div>
+                    </flex>
+                    <div class="grid mx-auto space-y-4">
+                        <template x-for="(image, childIndex) in howToUse.images" hidden>
+                            <div class="w-full overflow-hidden border rounded-md border-neutral-300 dark:border-neutral-700">
+                                <img class="w-full h-auto dark:hidden" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}.jpg`" :alt="image">
+                                <img class="hidden w-full h-auto dark:block" :src="`src/images/how-to-use-${parentIndex + 1}-${childIndex + 1}-dark.jpg`" :alt="image">
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </section>
+
         <!-- Modal -->
-        <div id="modal" class="fixed top-0 left-0 z-10 invisible hidden w-screen h-screen bg-neutral-500/50"
+        <div id="modal" class="fixed top-0 left-0 z-20 invisible hidden w-screen h-screen bg-neutral-500/50"
             :class="{ 
                 'hidden invisible': !modal.isOpen 
             }"
