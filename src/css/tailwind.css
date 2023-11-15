@@ -30,7 +30,7 @@ pre .support.tag-name{
 }
 pre .support.attribute,
 pre .support.operator {
-	@apply text-neutral-600 dark:text-neutral-500
+	@apply text-neutral-600 dark:text-neutral-400
 }
 pre .string.quote,
 pre .string.value {
